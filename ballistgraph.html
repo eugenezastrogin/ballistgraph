@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>.366TKM</title>
+<style> /* This is a CSS style sheet: it adds style to the program output */
+.output { font-weight: bold; }           /* Calculated values in bold */
+#payment { text-decoration: underline; } /* For element with id="payment" */
+#graph { border: solid black 1px; }      /* Chart has a simple border */
+</style>
+</head>
+<body>
+<form onsubmit="return false">
+<input type="radio" name="bullet" value="eco" checked> Eco
+<input type="radio" name="bullet" value="deri"> Deri
+<input type="radio" name="bullet" value="kion13"> Kion 13
+<input type="radio" name="bullet" value="kion15"> Kion 15
+<input type="radio" name="bullet" value="SP13"> SP 13
+<input type="radio" name="bullet" value="FMJ"> FMJ
+<input type="radio" name="bullet" value="etna"> Etna
+<input type="submit" value="Send" onclick="validate()">
+</form>
+<!--<button type='button' onclick="validate()">Send</button>-->
+Ballistic coefficent: <span class="output" id="bc"></span>
+<canvas id="graph" width="800" height="600"></canvas>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>
