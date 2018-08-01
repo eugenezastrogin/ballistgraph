@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>.366TKM</title>
-<style> /* This is a CSS style sheet: it adds style to the program output */
+<title>BallGraph</title>
+<meta charset="UTF-8">
+<style>
 .output { font-weight: bold; }           /* Calculated values in bold */
 #payment { text-decoration: underline; } /* For element with id="payment" */
 #graph { border: solid black 1px; }      /* Chart has a simple border */
@@ -10,18 +11,21 @@
 </head>
 <body>
 <form onsubmit="return false">
-<input type="radio" name="bullet" value="eco" checked> Eco
-<input type="radio" name="bullet" value="deri"> Deri
-<input type="radio" name="bullet" value="kion13"> Kion 13
-<input type="radio" name="bullet" value="kion15"> Kion 15
-<input type="radio" name="bullet" value="SP13"> SP 13
-<input type="radio" name="bullet" value="FMJ"> FMJ
-<input type="radio" name="bullet" value="etna"> Etna
+<input type="radio" name="bullet" value="eco"> Эко
+<input type="radio" name="bullet" value="deri"> Дери
+<input type="radio" name="bullet" value="kion13"> Кион 13
+<input type="radio" name="bullet" value="kion15"> Кион 15
+<input type="radio" name="bullet" value="sp13"> SP 13
+<input type="radio" name="bullet" value="fmj"> FMJ
+<input type="radio" name="bullet" value="etna"> Этна
 <input type="submit" value="Send" onclick="validate()">
 </form>
 <!--<button type='button' onclick="validate()">Send</button>-->
-Ballistic coefficent: <span class="output" id="bc"></span>
-<canvas id="graph" width="800" height="600"></canvas>
+Баллистический коэффициент: <span class="output" id="bc">0</span><br>
+Дульная энергия: <span class="output" id="muzzle_energy">0</span> J<br>
+Цена: <span class="output" id="price">0</span>р.<br>
+Рассеивание на 100м: <span class="output" id="spread">0mm / 0</span>MOA<br>
+<canvas id="graph" width="720" height="300"></canvas>
 <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
