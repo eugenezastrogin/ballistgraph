@@ -1,21 +1,20 @@
 "use strict"; // Use ECMAScript 5 strict mode in browsers that support it
 
-var distances = [ 0, 50, 100, 150, 175, 200 ];
 var bullets = {
     eco:
         { drop: [0, 10, 0, -80, -150, -250],
           speed: [810, 700, 600, 515, 480, 440],
-          bc: 0.14, spread: 80, price: 20, weight: 6.5, color:'#00ff7f'
+          bc: 0.14, spread: 80, price: 20, weight: 6.5, color:'green'
         },
     deri:
         { drop: [0, 30, 0, -60, -180, -315],
           speed: [550, 516, 470, 426, 407, 389],
-          bc: 0.25, spread: 75, price: 25, weight: 13.5, color:'#40e0d0'
+          bc: 0.25, spread: 75, price: 25, weight: 13.5, color:'#00ff79'
         },
     kion13:
         { drop: [0, 20, 0, -110, -210, -330],
           speed: [650, 584, 525, 470, 444, 421],
-          bc: 0.2, spread: 40, price: 27, weight: 13, color:'#ff2000'
+          bc: 0.2, spread: 40, price: 27, weight: 13, color:'grey'
         },
     kion15:
         { drop: [0, 30, 0, -130, -230, -370],
@@ -39,72 +38,167 @@ var bullets = {
         },
 };
 
-function chart() {
-    var hmax = 0, hmin = 0;
-    for (var key in bullets) {
-        if (Math.max.apply(Math, bullets[key].drop) > hmax) {
-            hmax = Math.max.apply(Math, bullets[key].drop)
-        }
-        if (Math.min.apply(Math, bullets[key].drop) < hmin) {
-            hmin = Math.min.apply(Math, bullets[key].drop)
-        }
-    }
-    var dropmod = hmax - hmin
-    var graph = document.getElementById('graph'); // Get the <canvas> tag
-    graph.width = graph.width;  // Magic to clear and reset the canvas element
-    // Get the "context" object for the <canvas> that defines the drawing API
-    var g = graph.getContext('2d'); // All drawing is done with this object
-    var width = graph.width, height = graph.height; // Get canvas size
-    // These functions convert height and distance amounts to pixels
-    function distToX(n) { return n * (width/Math.max.apply(Math, distances)); }
-    function heigthToY(n) { var offset = 10; return (offset+hmax-n)* (height/(dropmod+2*offset)); }
-    g.lineWidth = 1.5;
-    for (var key in bullets) {
-        g.strokeStyle = bullets[key].color;
-        g.beginPath();
-        g.moveTo(0,heigthToY(bullets[key].drop[0]));
-        for (var p = 0; p <= distances.length; p++) {
-            g.lineTo(distToX(distances[p]),heigthToY(bullets[key].drop[p]))
-        }
-        g.stroke();
-    }
-
-    // Now make yearly tick marks and year numbers on X axis
-    g.textAlign="center";                          // Center text over ticks
-    var y = heigthToY(0);                          // Y coordinate of X axis
-    for(var dist=0; dist <= distances.length; dist++) {   // For each distance
-        var x = distToX(distances[dist]);                  // Compute tick position
-        g.fillRect(x-0.5,y-3,1,3);                 // Draw the tick
-        g.fillText(String(distances[dist]), x, y-5);
-        if (dist == distances.length-1) g.fillText("Дистанция, м", x-30, y-15); // Label the axis
-    }
-    // Mark drops along the right edge
-    g.textAlign = "right";                         // Right-justify text
-    g.textBaseline = "middle";                     // Center it vertically
-    for (var key in bullets) {
-        var rightEdge = distToX(distances[distances.length-1]);          // X coordinate of Y axis
-        var ldrop = bullets[key].drop[distances.length-1]
-        var y = heigthToY(ldrop);               // Compute Y position of tick
-        g.fillRect(rightEdge-3, y-0.5, 3,1);       // Draw the tick mark
-        g.fillText(String(ldrop),    // And label it.
-                   rightEdge-5, y);
-        g.fillText(String(key),    // And label it.
-                   rightEdge-5, y-10);
-        }
-}
-chart();
-
-function energy(m, v) { return Math.ceil((m*v*v)/2); }
 
 function moaSpread(spread) { return ((3.438*spread)/100).toFixed(1); }
+function energy(m, v) { return Math.ceil((m*Math.pow(10,-3)*v*v)/2); }
 
-function validate() {
-    var choice = bullets[document.querySelector('input[name="bullet"]:checked').value];
-   // alert(choice);
-    document.getElementById("bc").innerHTML = choice.bc;
-    document.getElementById("spread").innerHTML = choice.spread
-        + 'mm / ' + moaSpread(choice.spread);
-    document.getElementById("muzzle_energy").innerHTML =
-        energy(choice.weight*Math.pow(10,-3), choice.speed[0]);
-    document.getElementById("price").innerHTML = choice.price;
+
+var graphdata0 = [], graphdata1 = [], graphdata2 = [];
+for (var key in bullets) {
+    graphdata0.push({
+        label: key,
+        backgroundColor: bullets[key].color,
+        borderColor: bullets[key].color,
+        data: bullets[key].drop,
+        fill: false,
+    })
+    graphdata1.push({
+        label: key,
+        backgroundColor: bullets[key].color,
+        borderColor: bullets[key].color,
+        data: bullets[key].speed,
+        fill: false,
+    })
+    graphdata2.push({
+        label: key,
+        backgroundColor: bullets[key].color,
+        borderColor: bullets[key].color,
+        data: bullets[key].speed.map(function(x) {return energy(bullets[key].weight, x)}),
+        fill: false,
+    })
+}
+
+
+
+function drop() {
+
+    var config = {
+        type: 'line',
+        data: {
+            labels: [ 0, 50, 100, 150, 175, 200 ],
+            datasets: graphdata0,
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: 'bottom',
+            },
+            title: {
+                display: false,
+                text: '366TKM'
+            },
+            tooltips: {
+                mode: 'point',
+            },
+            hover: {
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Дистанция, м'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    position: 'right',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Падение, мм',
+                    }
+                }]
+            }
+        }
+    };
+    var ctx = document.getElementById('dropChart').getContext('2d');
+    window.mchart = new Chart(ctx, config);
+}
+
+
+function spread() {
+
+    var spreaddata = [{data: [], backgroundColor: []}];
+    var labeld = [];
+    for (var key in bullets) {
+        spreaddata[0].data.push(bullets[key].spread/2)
+        spreaddata[0].backgroundColor.push(bullets[key].color)
+        labeld.push(key)
+    }
+
+    var config = {
+        data: {
+            datasets: spreaddata,
+            labels: labeld,
+        },
+        options: {
+            responsive: true,
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        var sum = 0;
+                        return ' ' + data.labels[tooltipItem.index] +': '
+                            + tooltipItem.yLabel*2 + ' мм / '
+                            + moaSpread(tooltipItem.yLabel*2) + ' MOA';
+                    },
+                },
+
+            },
+            legend: {
+                position: 'right',
+                display: false,
+            },
+            title: {
+                display: true,
+                text: 'Рассеивание на 100м'
+            },
+            scale: {
+                ticks: {
+                    beginAtZero: true
+                },
+                reverse: false
+            },
+            animation: {
+                animateRotate: false,
+                animateScale: true
+            }
+        }
+    };
+    var ctx = document.getElementById('spreadChart');
+    window.myPolarArea = Chart.PolarArea(ctx, config);
+}
+
+window.onload = function() {
+    drop();
+    spread();
+};
+
+
+
+function menuchange() {
+ //   var choice = document.querySelector('input[name="bullet"]:checked').value;
+    var e = document.getElementById("graphtype");
+    var choice = e.options[e.selectedIndex].value;
+//  document.getElementById("bc").innerHTML = choice.bc;
+//  document.getElementById("muzzle_energy").innerHTML =
+//      energy(choice.weight*Math.pow(10,-3), choice.speed[0]);
+//  document.getElementById("price").innerHTML = choice.price;
+
+    if (choice=='speed') {
+        window.mchart.data.datasets = graphdata1;
+        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+        window.mchart.update();
+    }
+    else if (choice=='energy') {
+        window.mchart.data.datasets = graphdata2;
+        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
+        window.mchart.update();
+    }
+    else if (choice=='drop') {
+        window.mchart.data.datasets = graphdata0;
+        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
+        window.mchart.update();
+    }
+
 }
