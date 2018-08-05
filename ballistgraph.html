@@ -4,24 +4,49 @@
 <head>
     <title>BallGraph</title>
     <meta charset="UTF-8">
-    <script type="text/javascript" src="./Chart.min.js"></script>
+    <meta name="keywords" content=".366, .366ТКМ, Техкрим, 366TKM, патроны">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="Chart.min.js"></script>
     <style>
-    canvas{
+    canvas {
         -moz-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
     }
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 4px;
+    }
     #dropdown{ text-align: center; }
-    #canvas-holder { border: solid white 1px; }      /* Chart has a simple border */
+    #canvas-holder { border: solid white 1px; }
     </style>
 </head>
 
 <body>
+    <h1 style="text-align:center">
+        Характеристики патронов .366 ТКМ
+    </h1>
+    <table id="mtable">
+        <tr>
+            <th>Патрон</th>
+        </tr>
+        <tr>
+            <th><abbr title="Баллистический коэффициент">BC</abbr></th>
+        </tr>
+        <tr>
+            <th>Масса</th>
+        </tr>
+        <tr>
+            <th title="Магазин ТЕМП с 5% скидкой">Цена</th>
+        </tr>
+    </table>
+    <hr>
     <div id='dropdown' style="width:90%">
         <select id="graphtype" onchange="menuchange()">
-            <option disabled selected value="">Выберите график</option>
+            <option disabled value="">Выберите график</option>
+            <option value="drop" selected>Падение</option>
             <option value="energy">Энергия</option>
-            <option value="drop">Падение</option>
             <option value="speed">Скорость</option>
         </select>
     </div>
