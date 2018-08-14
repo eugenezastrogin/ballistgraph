@@ -46,31 +46,71 @@ const bullets = {
 };
 
 
-function moaSpread(spread) { return ((3.438*spread)/100).toFixed(1); }
-function energy(m, v) { return Math.ceil((m*Math.pow(10,-3)*v*v)/2); }
+function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
+function energy(m, v) { return Math.ceil((m*Math.pow(10, -3) * v * v) / 2); }
+function speedFromBC (D2, V1, BC) {
+    if (D2 == 50) {
+        return 
+    }
+    const K = 0.005283;
+    return Math.pow(Math.sqrt(V1) - (K * D2) / BC, 2);
+}
 
-
-var graphdata0 = [], graphdata1 = [], graphdata2 = [];
+const labels_given = [ 0, 50, 100, 150, 175, 200 ];
+const labels_theory = [0,50,100,150,200,250,300];
+var graphdata0 = [];
+var graphdata1 = [];
+var graphdata2 = [];
+var graphdata3 = [];
 for (var key in bullets) {
+    var dropScatter = [];
+    var speedScatter = [];
+    var energyScatter = [];
+    var speedTheoryScatter = [];
+    for (var i = 0; i < labels_given.length; i++) {
+        dropScatter.push({
+            x:labels_given[i],
+            y:bullets[key].drop[i]
+        });
+        speedScatter.push({
+            x:labels_given[i],
+            y:bullets[key].speed[i]
+        });
+        energyScatter.push({
+            x:labels_given[i],
+            y:energy(bullets[key].weight, bullets[key].speed[i])
+        });
+        speedTheoryScatter.push({
+            x:labels_given[i],
+            y:speedFromBC(labels_given[i], bullets[key].speed[0], bullets[key].bc )
+        });
+    }
     graphdata0.push({
         label: key,
         backgroundColor: bullets[key].color,
         borderColor: bullets[key].color,
-        data: bullets[key].drop,
+        data: dropScatter,
         fill: false,
     });
     graphdata1.push({
         label: key,
         backgroundColor: bullets[key].color,
         borderColor: bullets[key].color,
-        data: bullets[key].speed,
+        data: speedScatter,
         fill: false,
     });
     graphdata2.push({
         label: key,
         backgroundColor: bullets[key].color,
         borderColor: bullets[key].color,
-        data: bullets[key].speed.map(function(x) {return energy(bullets[key].weight, x)}),
+        data: energyScatter,
+        fill: false,
+    });
+    graphdata3.push({
+        label: key,
+        backgroundColor: bullets[key].color,
+        borderColor: bullets[key].color,
+        data: speedTheoryScatter,
         fill: false,
     })
 }
@@ -81,13 +121,13 @@ function drop() {
     var config = {
         type: 'line',
         data: {
-            labels: [ 0, 50, 100, 150, 175, 200 ],
             datasets: graphdata0,
         },
         options: {
             responsive: true,
             legend: {
                 position: 'bottom',
+                display: false,
             },
             title: {
                 display: false,
@@ -101,6 +141,10 @@ function drop() {
             },
             scales: {
                 xAxes: [{
+                    ticks: {
+                        maxTicksLimit: 6,
+                    },
+                    type: 'linear',
                     display: true,
                     scaleLabel: {
                         display: true,
@@ -108,6 +152,9 @@ function drop() {
                     }
                 }],
                 yAxes: [{
+                    ticks: {
+                        suggestedMax: 75,
+                    },
                     display: true,
                     position: 'right',
                     scaleLabel: {
@@ -128,7 +175,7 @@ function spread() {
     var spreaddata = [{data: [], backgroundColor: []}];
     var labeld = [];
     for (var key in bullets) {
-        spreaddata[0].data.push(bullets[key].spread/2);
+        spreaddata[0].data.push(bullets[key].spread / 2);
         spreaddata[0].backgroundColor.push(bullets[key].color);
         labeld.push(key)
     }
@@ -139,13 +186,19 @@ function spread() {
             labels: labeld,
         },
         options: {
+            layout: {
+                padding: {
+                    top: 10,
+                },
+            },
             responsive: true,
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
+                        var sum = 0;
                         return ' ' + data.labels[tooltipItem.index] +': '
-                            + tooltipItem.yLabel*2 + ' мм / '
-                            + moaSpread(tooltipItem.yLabel*2) + ' MOA';
+                            + tooltipItem.yLabel * 2 + ' мм / '
+                            + moaSpread(tooltipItem.yLabel * 2) + ' MOA';
                     },
                 },
 
@@ -156,11 +209,13 @@ function spread() {
             },
             title: {
                 display: true,
-                text: 'Рассеивание на 100м'
+                text: 'Рассеивание на 100м',
+                position: 'bottom',
             },
             scale: {
                 ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    suggestedMax: 50,
                 },
                 reverse: false
             },
@@ -177,21 +232,19 @@ function spread() {
 
 function tablegen() {
     var table = document.getElementById('mtable');
-    var namesrow = table.rows[0];
-    var bcrow = table.rows[1];
-    var weightrow = table.rows[2];
-    var pricerow = table.rows[3];
     var i = 1;
     for (var key in bullets) {
-        var cell0 = namesrow.insertCell(i);
+        var currow = table.insertRow(i);
+        var cell0 = currow.insertCell(0);
         cell0.innerHTML = bullets[key].name;
         cell0.style.backgroundColor = bullets[key].color;
-        var cell1 = bcrow.insertCell(i);
+        var cell1 = currow.insertCell(1);
         cell1.innerHTML = bullets[key].bc;
-        var cell2 = weightrow.insertCell(i);
-        cell2.innerHTML = bullets[key].weight +' г';
-        var cell3 = pricerow.insertCell(i);
-        cell3.innerHTML = bullets[key].price +' ₽';
+        var cell2 = currow.insertCell(2);
+        cell2.innerHTML = bullets[key].weight +'г';
+        var cell3 = currow.insertCell(3);
+        cell3.innerHTML = bullets[key].price +'₽';
+        i += 1;
     }
 }
 
@@ -200,18 +253,27 @@ function menuchange() {
     var e = document.getElementById("graphtype");
     var choice = e.options[e.selectedIndex].value;
 
-    if (choice=='speed') {
+    if (choice == 'speed') {
         window.mchart.data.datasets = graphdata1;
+        window.mchart.data.labels = labels_given;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
         window.mchart.update();
     }
-    else if (choice=='energy') {
+    else if (choice == 'speedTheory') {
+        window.mchart.data.datasets = graphdata3;
+        window.mchart.data.labels = labels_theory;
+        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+        window.mchart.update();
+    }
+    else if (choice == 'energy') {
         window.mchart.data.datasets = graphdata2;
+        window.mchart.data.labels = labels_given;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
         window.mchart.update();
     }
-    else if (choice=='drop') {
+    else if (choice == 'drop') {
         window.mchart.data.datasets = graphdata0;
+        window.mchart.data.labels = labels_given;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
         window.mchart.update();
     }

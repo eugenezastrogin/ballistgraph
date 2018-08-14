@@ -3,12 +3,15 @@
 
 <head>
     <title>BallGraph</title>
-    <meta charset="UTF-8">
-    <meta name="keywords" content=".366, .366ТКМ, Техкрим, 366TKM, патроны">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script type="text/javascript" src="Chart.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content=".366, .366ТКМ, Техкрим, 366TKM, патроны" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
     <style>
     canvas {
+    /*    width: 100% !important;
+        min-width: 720px;
+        height: auto !important; */
         -moz-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
@@ -16,42 +19,41 @@
     table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
-        padding: 4px;
+        padding: 2px;
     }
+    tr:hover {background-color:#f5f5f5;}
     #dropdown{ text-align: center; }
     #canvas-holder { border: solid white 1px; }
     </style>
 </head>
 
 <body>
-    <h1 style="text-align:center">
-        Характеристики патронов .366 ТКМ
-    </h1>
+    <h6 style="text-align:center">
+        Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
+    </h6>
+    <div align="center">
     <table id="mtable">
         <tr>
             <th>Патрон</th>
-        </tr>
-        <tr>
             <th><abbr title="Баллистический коэффициент">BC</abbr></th>
-        </tr>
-        <tr>
             <th>Масса</th>
-        </tr>
-        <tr>
             <th title="Магазин ТЕМП с 5% скидкой">Цена</th>
         </tr>
     </table>
-    <hr>
-    <div id='dropdown' style="width:90%">
+    </div>
+    <hr />
+    <div id='dropdown'>
         <select id="graphtype" onchange="menuchange()">
             <option disabled value="">Выберите график</option>
             <option value="drop" selected>Падение</option>
             <option value="energy">Энергия</option>
             <option value="speed">Скорость</option>
+            <!-   <option value="speedTheory">Скорость (теория)</option> -->
         </select>
     </div>
-    <div id="canvas-holder" style="width:90%">
-        <canvas id="dropChart"></canvas>
+    <div id="canvas-holder" style="position: relative; height:90vh; width:95vw">
+        <canvas id="dropChart" ></canvas>
+    <hr />
         <canvas id="spreadChart"></canvas>
     </div>
     <script type="text/javascript" src="app.js"></script>
