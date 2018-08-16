@@ -4,117 +4,112 @@ const bullets = {
     eco:
         { drop: [0, 10, 0, -80, -150, -250],
           speed: [810, 700, 600, 515, 480, 440],
-          bc: 0.14, spread: 80, price: 18.05, weight: 6.5, color:'mediumseagreen',
+          bc: 0.14, spread: 80, price: 18.05, weight: 6.5,
+          color:'rgba(60,179,113,1)',
           name: "Эко",
         },
     deri:
         { drop: [0, 30, 0, -60, -180, -315],
           speed: [550, 516, 470, 426, 407, 389],
-          bc: 0.25, spread: 75, price: 22.8, weight: 13.5, color:'dodgerblue',
+          bc: 0.25, spread: 75, price: 22.8, weight: 13.5,
+          color:'rgba(30,144,255,1)',
           name: "Дери",
         },
     kion13:
         { drop: [0, 20, 0, -110, -210, -330],
           speed: [650, 584, 525, 470, 444, 421],
-          bc: 0.2, spread: 40, price: 24.7, weight: 13, color:'grey',
-          name: "Кион 13",
+          bc: 0.2, spread: 40, price: 24.7, weight: 13,
+          color:'rgba(80,80,80,1)',
+          name: "Кион&nbsp13",
         },
     kion15:
         { drop: [0, 30, 0, -130, -230, -370],
           speed: [600, 546, 497, 451, 430, 410],
-          bc: 0.23, spread: 70, price: 25.65, weight: 15, color:'slateblue',
-          name: "Кион 15",
+          bc: 0.23, spread: 70, price: 25.65, weight: 15,
+          color:'rgba(106,90,205,1)',
+          name: "Кион&nbsp15",
         },
     sp13:
         { drop: [0, 20, 0, -120, -230, -370],
           speed: [620, 545, 490, 434, 409, 388],
-          bc: 0.2, spread: 60, price: 25.65, weight: 12.6, color:'#dc143c',
-          name: "SP 13",
+          bc: 0.2, spread: 60, price: 25.65, weight: 12.6,
+          color:'rgba(220,20,60,1)',
+          name: "SP&nbsp13",
         },
     fmj:
         { drop: [0, 50, 0, -76, -120, -190],
           speed: [600, 550, 500, 454, 432, 413],
-          bc: 0.23, spread: 65, price: 25.65, weight: 14, color:'#ff8c00',
+          bc: 0.23, spread: 65, price: 25.65, weight: 14,
+          color:'rgba(255,140,0,1)',
           name: "FMJ",
         },
     etna:
         { drop: [0, 30, 0, -140, -250, -410],
           speed: [600, 537, 480, 428, 406, 385],
-          bc: 0.19, spread: 35, price: "?", weight: 12, color:'#BF008b',
+          bc: 0.19, spread: 35, price: "?", weight: 12,
+          color:'rgba(191,0,139,1)',
           name: "Этна",
         },
 };
 
-
-function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
-function energy(m, v) { return Math.ceil((m*Math.pow(10, -3) * v * v) / 2); }
-function speedFromBC (D2, V1, BC) {
-    if (D2 == 50) {
-        return 
-    }
-    const K = 0.005283;
-    return Math.pow(Math.sqrt(V1) - (K * D2) / BC, 2);
-}
-
 const labels_given = [ 0, 50, 100, 150, 175, 200 ];
-const labels_theory = [0,50,100,150,200,250,300];
 var graphdata0 = [];
 var graphdata1 = [];
 var graphdata2 = [];
-var graphdata3 = [];
-for (var key in bullets) {
-    var dropScatter = [];
-    var speedScatter = [];
-    var energyScatter = [];
-    var speedTheoryScatter = [];
-    for (var i = 0; i < labels_given.length; i++) {
-        dropScatter.push({
-            x:labels_given[i],
-            y:bullets[key].drop[i]
+var visibilityArr = [];
+
+
+function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
+
+function energy(m, v) { return Math.ceil((m*Math.pow(10, -3) * v * v) / 2); }
+
+function initdata() {
+
+    for (var i = 0; i < Object.keys(bullets).length; i++) {
+        visibilityArr.push(0);
+    }
+
+    for (var key in bullets) {
+        var dropScatter = [];
+        var speedScatter = [];
+        var energyScatter = [];
+        for (var i = 0; i < labels_given.length; i++) {
+            dropScatter.push({
+                x:labels_given[i],
+                y:bullets[key].drop[i]
+            });
+            speedScatter.push({
+                x:labels_given[i],
+                y:bullets[key].speed[i]
+            });
+            energyScatter.push({
+                x:labels_given[i],
+                y:energy(bullets[key].weight, bullets[key].speed[i])
+            });
+        }
+        graphdata0.push({
+            label: key,
+            backgroundColor: bullets[key].color,
+            borderColor: bullets[key].color,
+            data: dropScatter,
+            fill: false,
         });
-        speedScatter.push({
-            x:labels_given[i],
-            y:bullets[key].speed[i]
+        graphdata1.push({
+            label: key,
+            backgroundColor: bullets[key].color,
+            borderColor: bullets[key].color,
+            data: speedScatter,
+            fill: false,
         });
-        energyScatter.push({
-            x:labels_given[i],
-            y:energy(bullets[key].weight, bullets[key].speed[i])
-        });
-        speedTheoryScatter.push({
-            x:labels_given[i],
-            y:speedFromBC(labels_given[i], bullets[key].speed[0], bullets[key].bc )
+        graphdata2.push({
+            label: key,
+            backgroundColor: bullets[key].color,
+            borderColor: bullets[key].color,
+            data: energyScatter,
+            fill: false,
         });
     }
-    graphdata0.push({
-        label: key,
-        backgroundColor: bullets[key].color,
-        borderColor: bullets[key].color,
-        data: dropScatter,
-        fill: false,
-    });
-    graphdata1.push({
-        label: key,
-        backgroundColor: bullets[key].color,
-        borderColor: bullets[key].color,
-        data: speedScatter,
-        fill: false,
-    });
-    graphdata2.push({
-        label: key,
-        backgroundColor: bullets[key].color,
-        borderColor: bullets[key].color,
-        data: energyScatter,
-        fill: false,
-    });
-    graphdata3.push({
-        label: key,
-        backgroundColor: bullets[key].color,
-        borderColor: bullets[key].color,
-        data: speedTheoryScatter,
-        fill: false,
-    })
 }
-
 
 function drop() {
 
@@ -124,6 +119,11 @@ function drop() {
             datasets: graphdata0,
         },
         options: {
+            layout: {
+                padding: {
+                    top: 10,
+                },
+            },
             responsive: true,
             legend: {
                 position: 'bottom',
@@ -137,7 +137,7 @@ function drop() {
                 mode: 'point',
             },
             hover: {
-                intersect: true
+                intersect: false,
             },
             scales: {
                 xAxes: [{
@@ -153,7 +153,6 @@ function drop() {
                 }],
                 yAxes: [{
                     ticks: {
-                        suggestedMax: 75,
                     },
                     display: true,
                     position: 'right',
@@ -165,10 +164,10 @@ function drop() {
             }
         }
     };
-    var ctx = document.getElementById('dropChart').getContext('2d');
+    var ctx = document.getElementById('ballChart').getContext('2d');
     window.mchart = new Chart(ctx, config);
+    window.mchart.aspectRatio = 1;
 }
-
 
 function spread() {
 
@@ -176,7 +175,7 @@ function spread() {
     var labeld = [];
     for (var key in bullets) {
         spreaddata[0].data.push(bullets[key].spread / 2);
-        spreaddata[0].backgroundColor.push(bullets[key].color);
+        spreaddata[0].backgroundColor.push(bullets[key].color.replace(/1\)$/, "0.6)"));
         labeld.push(key)
     }
 
@@ -209,13 +208,12 @@ function spread() {
             },
             title: {
                 display: true,
-                text: 'Рассеивание на 100м',
+                text: 'Рассеивание на 100м, мм',
                 position: 'bottom',
             },
             scale: {
                 ticks: {
                     beginAtZero: true,
-                    suggestedMax: 50,
                 },
                 reverse: false
             },
@@ -225,10 +223,10 @@ function spread() {
             }
         }
     };
-    var ctx = document.getElementById('spreadChart');
+    var ctx = document.getElementById('ballChart');
     window.myPolarArea = Chart.PolarArea(ctx, config);
+    window.myPolarArea.aspectRatio = 1;
 }
-
 
 function tablegen() {
     var table = document.getElementById('mtable');
@@ -237,51 +235,89 @@ function tablegen() {
         var currow = table.insertRow(i);
         var cell0 = currow.insertCell(0);
         cell0.innerHTML = bullets[key].name;
-        cell0.style.backgroundColor = bullets[key].color;
+        cell0.style.backgroundColor = bullets[key].color.replace(/1\)$/, "0.5)");
         var cell1 = currow.insertCell(1);
         cell1.innerHTML = bullets[key].bc;
+        cell1.style.textAlign = 'center';
         var cell2 = currow.insertCell(2);
-        cell2.innerHTML = bullets[key].weight +'г';
+        cell2.innerHTML = bullets[key].weight +'&nbspг';
+        cell2.style.textAlign = 'center';
         var cell3 = currow.insertCell(3);
-        cell3.innerHTML = bullets[key].price +'₽';
+        cell3.innerHTML = bullets[key].price +'&nbsp₽';
+        cell3.style.textAlign = 'center';
+        var cell4 = currow.insertCell(0);
+        cell4.innerHTML = '<input type="checkbox" checked id="'
+            + key + '" onclick="checkupdate(this.id);"/>';
+        cell4.style.backgroundColor = bullets[key].color;
         i += 1;
     }
 }
 
+function updateVisibility() {
+    for (var i = 0; i < visibilityArr.length; i++) {
+        window.mchart.data.datasets[i].hidden = visibilityArr[i];
+    }
+}
+
+function checkupdate(bullet) {
+    var i = function() {
+        for (var i = 0; i < window.mchart.data.datasets.length; i++) {
+            if (window.mchart.data.datasets[i].label == bullet) { return i; }
+        }
+    }();
+
+    if (document.getElementById(bullet).checked == true) {
+        visibilityArr[i] = 0;
+    } else {
+        visibilityArr[i] = 1;
+    }
+
+    updateVisibility();
+    window.mchart.update();
+}
 
 function menuchange() {
     var e = document.getElementById("graphtype");
     var choice = e.options[e.selectedIndex].value;
 
-    if (choice == 'speed') {
-        window.mchart.data.datasets = graphdata1;
-        window.mchart.data.labels = labels_given;
-        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+    if (choice != 'spread') {
+        if (window.myPolarArea) {
+        window.myPolarArea.destroy();
+        window.mchart.destroy();
+        drop();
+        }
+
+        if (choice == 'speed') {
+            window.mchart.data.datasets = graphdata1;
+            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+        }
+        else if (choice == 'energy') {
+            window.mchart.data.datasets = graphdata2;
+            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
+        }
+        else if (choice == 'drop') {
+            window.mchart.data.datasets = graphdata0;
+            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
+        }
+
+        updateVisibility();
         window.mchart.update();
+
     }
-    else if (choice == 'speedTheory') {
-        window.mchart.data.datasets = graphdata3;
-        window.mchart.data.labels = labels_theory;
-        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
-        window.mchart.update();
-    }
-    else if (choice == 'energy') {
-        window.mchart.data.datasets = graphdata2;
-        window.mchart.data.labels = labels_given;
-        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
-        window.mchart.update();
-    }
-    else if (choice == 'drop') {
-        window.mchart.data.datasets = graphdata0;
-        window.mchart.data.labels = labels_given;
-        window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
-        window.mchart.update();
+    else if (choice == 'spread') {
+        if (window.mchart) {
+        window.mchart.destroy();
+        spread();
+        }
     }
 }
 
 
 window.onload = function() {
-    drop();
-    spread();
+    if (window.myPolarArea) { window.myPolarArea.destroy(); }
+    if (window.mchart) { window.mchart.destroy(); }
+    document.getElementById('graphtype').selectedIndex=1;
     tablegen();
+    initdata();
+    drop();
 };

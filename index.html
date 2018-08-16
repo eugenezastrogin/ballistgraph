@@ -7,33 +7,18 @@
     <meta name="keywords" content=".366, .366ТКМ, Техкрим, 366TKM, патроны" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-    <style>
-    canvas {
-    /*    width: 100% !important;
-        min-width: 720px;
-        height: auto !important; */
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-    }
-    table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-        padding: 2px;
-    }
-    tr:hover {background-color:#f5f5f5;}
-    #dropdown{ text-align: center; }
-    #canvas-holder { border: solid white 1px; }
-    </style>
+    <script type="text/javascript" src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-    <h6 style="text-align:center">
+    <h3 class="header">
         Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
-    </h6>
+    </h3>
     <div align="center">
     <table id="mtable">
         <tr>
+            <th></th>
             <th>Патрон</th>
             <th><abbr title="Баллистический коэффициент">BC</abbr></th>
             <th>Масса</th>
@@ -48,15 +33,13 @@
             <option value="drop" selected>Падение</option>
             <option value="energy">Энергия</option>
             <option value="speed">Скорость</option>
-            <!-   <option value="speedTheory">Скорость (теория)</option> -->
+            <option value="spread">Рассеивание</option>
         </select>
     </div>
-    <div id="canvas-holder" style="position: relative; height:90vh; width:95vw">
-        <canvas id="dropChart" ></canvas>
     <hr />
-        <canvas id="spreadChart"></canvas>
+    <div id="canvas-holder">
+        <canvas id="ballChart" ></canvas>
     </div>
-    <script type="text/javascript" src="app.js"></script>
 </body>
 
 </html>
