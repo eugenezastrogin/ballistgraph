@@ -1,5 +1,44 @@
 "use strict"; // Use ECMAScript 5 strict mode in browsers that support it
 
+function Bullet(name, bc, weight, spread, price, drop, speed) {
+    this.name = name;
+    this.bc = bc;
+    this.weight = weight;
+    this.spread = spread;
+    this.price = price;
+    this.drop = drop;
+    this.speed = speed;
+};
+
+Bullet.prototype = {
+    toString: function() { return `Патрон $(this.name)`; }
+};
+
+const eco = new Bullet("Эко", 0.14, 6.5, 80, 19,
+    [0, 10, 0, -80, -150, -250], [810, 700, 600, 515, 480, 440]);
+const deri = new Bullet("Дери", 0.25, 13.5, 75, 24,
+    [0, 30, 0, -60, -180, -315], [550, 516, 470, 426, 407, 389]);
+const kion13 = new Bullet("Кион&nbsp13", 0.2, 13, 40, 26,
+    [0, 20, 0, -110, -210, -330], [650, 584, 525, 470, 444, 421]);
+const kion15 = new Bullet("Кион&nbsp15", 0.23, 15, 70, 27,
+    [0, 30, 0, -130, -230, -370], [600, 546, 497, 451, 430, 410]);
+const sp13 = new Bullet("SP&nbsp13", 0.2, 12.6, 60, 27,
+    [0, 20, 0, -120, -230, -370], [620, 545, 490, 434, 409, 388]);
+const fmj = new Bullet("FMJ", 0.23, 14, 65, 27,
+    [0, 50, 0, -76, -120, -190], [600, 550, 500, 454, 432, 413]);
+const etna = new Bullet("Этна", 0.19, 12, 35, null,
+    [0, 30, 0, -140, -250, -410], [600, 537, 480, 428, 406, 385]);
+
+const tkm366 = {};
+tkm366.eco = eco;
+tkm366.deri = deri;
+tkm366.kion13 = kion13;
+tkm366.kion15 = kion15;
+tkm366.sp13 = sp13;
+tkm366.fmj = fmj;
+tkm366.etna = etna;
+
+
 const bullets = {
     eco:
         { drop: [0, 10, 0, -80, -150, -250],
