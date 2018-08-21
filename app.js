@@ -193,7 +193,7 @@ function spread() {
             responsive: true,
             tooltips: {
                 callbacks: {
-                    label: function(tooltipItem, data) {
+                    label: (tooltipItem, data) => {
                         var sum = 0;
                         return ' ' + data.labels[tooltipItem.index] +': '
                             + tooltipItem.yLabel * 2 + ' мм / '
@@ -233,22 +233,27 @@ function tablegen() {
     var i = 1;
     for (var key in bullets) {
         var currow = table.insertRow(i);
+        currow.style.textAlign = 'center';
+        var cell1 = currow.insertCell(0);
+        cell1.innerHTML = bullets[key].name;
+        cell1.style.backgroundColor = bullets[key].color.replace(/1\)$/, "0.5)");
+        cell1.style.textAlign = 'left';
+        var cell2 = currow.insertCell(1);
+        cell2.innerHTML = bullets[key].bc;
+        var cell3 = currow.insertCell(2);
+        cell3.innerHTML = bullets[key].weight +'&nbspг';
+        var cell4 = currow.insertCell(3);
+        cell4.innerHTML = bullets[key].price +'&nbsp₽';
         var cell0 = currow.insertCell(0);
-        cell0.innerHTML = bullets[key].name;
-        cell0.style.backgroundColor = bullets[key].color.replace(/1\)$/, "0.5)");
-        var cell1 = currow.insertCell(1);
-        cell1.innerHTML = bullets[key].bc;
-        cell1.style.textAlign = 'center';
-        var cell2 = currow.insertCell(2);
-        cell2.innerHTML = bullets[key].weight +'&nbspг';
-        cell2.style.textAlign = 'center';
-        var cell3 = currow.insertCell(3);
-        cell3.innerHTML = bullets[key].price +'&nbsp₽';
-        cell3.style.textAlign = 'center';
-        var cell4 = currow.insertCell(0);
-        cell4.innerHTML = '<input type="checkbox" checked id="'
-            + key + '" onclick="checkupdate(this.id);"/>';
-        cell4.style.backgroundColor = bullets[key].color;
+        cell0.style.backgroundColor = bullets[key].color;
+
+        const chkbx = document.createElement('input');
+        chkbx.type = 'checkbox';
+        chkbx.checked = true;
+        chkbx.id = key;
+        chkbx.onclick = function() { checkupdate(this.id); };
+
+        cell0.appendChild(chkbx);
         i += 1;
     }
 }
