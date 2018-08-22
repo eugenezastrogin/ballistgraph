@@ -194,7 +194,6 @@ function spread() {
             tooltips: {
                 callbacks: {
                     label: (tooltipItem, data) => {
-                        var sum = 0;
                         return ' ' + data.labels[tooltipItem.index] +': '
                             + tooltipItem.yLabel * 2 + ' мм / '
                             + moaSpread(tooltipItem.yLabel * 2) + ' MOA';
@@ -262,6 +261,7 @@ function updateVisibility() {
     for (var i = 0; i < visibilityArr.length; i++) {
         window.mchart.data.datasets[i].hidden = visibilityArr[i];
     }
+    window.mchart.update();
 }
 
 function checkupdate(bullet) {
@@ -278,7 +278,6 @@ function checkupdate(bullet) {
     }
 
     updateVisibility();
-    window.mchart.update();
 }
 
 function menuchange() {
@@ -292,21 +291,21 @@ function menuchange() {
         drop();
         }
 
-        if (choice == 'speed') {
-            window.mchart.data.datasets = graphdata1;
-            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+        switch (choice) {
+            case 'speed':
+                window.mchart.data.datasets = graphdata1;
+                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Скорость пули, м/с';
+                break;
+            case 'energy':
+                window.mchart.data.datasets = graphdata2;
+                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
+                break;
+            case 'drop':
+                window.mchart.data.datasets = graphdata0;
+                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
+                break;
         }
-        else if (choice == 'energy') {
-            window.mchart.data.datasets = graphdata2;
-            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Энергия, джоули';
-        }
-        else if (choice == 'drop') {
-            window.mchart.data.datasets = graphdata0;
-            window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
-        }
-
         updateVisibility();
-        window.mchart.update();
 
     }
     else if (choice == 'spread') {
@@ -325,4 +324,5 @@ window.onload = function() {
     tablegen();
     initdata();
     drop();
+    updateVisibility();
 };
