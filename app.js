@@ -8,7 +8,7 @@ function Bullet(name, bc, weight, spread, price, drop, speed) {
     this.price = price;
     this.drop = drop;
     this.speed = speed;
-};
+}
 
 Bullet.prototype = {
     toString: function() { return `Патрон $(this.name)`; }
@@ -40,7 +40,7 @@ const colors = {
   sp13: 'rgba(220,20,60,1)',
   fmj: 'rgba(255,140,0,1)',
   etna: 'rgba(191,0,139,1)',
-}
+};
 
 const labels_given = [ 0, 50, 100, 150, 175, 200 ];
 var graphdata0 = [];
@@ -231,13 +231,21 @@ function tablegen() {
         var cell0 = currow.insertCell(0);
         cell0.style.backgroundColor = colors[key];
 
+        const lbl = document.createElement('label');
+        lbl.className = 'custom-control custom-checkbox';
         const chkbx = document.createElement('input');
         chkbx.type = 'checkbox';
+        chkbx.className = 'custom-control-input';
+      //  chkbx.style.backgroundColor = colors[key];
         chkbx.checked = true;
         chkbx.id = key;
         chkbx.onclick = function() { checkupdate(this.id); };
+        lbl.appendChild(chkbx);
+        const ind = document.createElement('span');
+        ind.className = 'custom-control-indicator';
+        lbl.appendChild(ind);
 
-        cell0.appendChild(chkbx);
+        cell0.appendChild(lbl);
         i += 1;
     }
 }
@@ -266,7 +274,7 @@ function updateVisibility() {
 }
 
 function checkupdate(bullet) {
-    //function to get number of called bullet in dataset
+    // function to get number of a called bullet in the dataset
     var i = function() {
         for (var i = 0; i < window.mchart.data.datasets.length; i++) {
             if (window.mchart.data.datasets[i].label == bullet) { return i; }
