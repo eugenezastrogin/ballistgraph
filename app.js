@@ -47,7 +47,8 @@ var graphdata0 = [];
 var graphdata1 = [];
 var graphdata2 = [];
 var visibilityArr = [];
-
+var spreaddata = [{data: [], backgroundColor: []}];
+var labeld = [];
 
 function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
 
@@ -159,16 +160,10 @@ function drop() {
     window.mchart.aspectRatio = 1;
 }
 
+
+
+
 function spread() {
-
-    var spreaddata = [{data: [], backgroundColor: []}];
-    var labeld = [];
-    for (var key in tkm366) {
-        spreaddata[0].data.push(tkm366[key].spread / 2);
-        spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, "0.6)"));
-        labeld.push(key)
-    }
-
     var config = {
         data: {
             datasets: spreaddata,
@@ -212,7 +207,7 @@ function spread() {
             }
         }
     };
-    var ctx = document.getElementById('ballChart');
+    var ctx = document.getElementById('spreadChart');
     window.myPolarArea = Chart.PolarArea(ctx, config);
     window.myPolarArea.aspectRatio = 1;
 }
@@ -234,7 +229,7 @@ function tablegen() {
         var cell4 = currow.insertCell(3);
         cell4.innerHTML = (tkm366[key].price * 0.95).toFixed(2) +'&nbsp₽';
         var cell0 = currow.insertCell(0);
-        cell0.style.backgroundColor = colors[key].replace(/1\)$/, "0.5)");
+        cell0.style.backgroundColor = colors[key];
 
         const chkbx = document.createElement('input');
         chkbx.type = 'checkbox';
@@ -248,13 +243,30 @@ function tablegen() {
 }
 
 function updateVisibility() {
+    //visibility for dropChart
     for (var i = 0; i < visibilityArr.length; i++) {
         window.mchart.data.datasets[i].hidden = visibilityArr[i];
     }
     window.mchart.update();
+
+    //visibility for spreadChart
+    spreaddata[0].data = [];
+    spreaddata[0].backgroundColor = [];
+    labeld = [];
+    var i = 0;
+    for (var key in tkm366) {
+        if (visibilityArr[i] == 0) {
+            spreaddata[0].data.push(tkm366[key].spread / 2);
+            spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, "0.6)"));
+            labeld.push(key);
+        }
+        i++;
+    }
+    if (window.myPolarArea) { window.myPolarArea.data.labels = labeld; window.myPolarArea.update(); }
 }
 
 function checkupdate(bullet) {
+    //function to get number of called bullet in dataset
     var i = function() {
         for (var i = 0; i < window.mchart.data.datasets.length; i++) {
             if (window.mchart.data.datasets[i].label == bullet) { return i; }
@@ -270,16 +282,11 @@ function checkupdate(bullet) {
     updateVisibility();
 }
 
-function menuchange() {
-    var e = document.getElementById("graphtype");
-    var choice = e.options[e.selectedIndex].value;
-
+function tabchange(choice) {
+    setActive(choice);
     if (choice != 'spread') {
-        if (window.myPolarArea) {
-        window.myPolarArea.destroy();
-        window.mchart.destroy();
-        drop();
-        }
+        document.getElementById('spreadChart').style.display = "none";
+        document.getElementById('ballChart').style.display = "initial";
 
         switch (choice) {
             case 'speed':
@@ -292,27 +299,31 @@ function menuchange() {
                 break;
             case 'drop':
                 window.mchart.data.datasets = graphdata0;
-                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
+                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Кучность, мм';
                 break;
         }
-        updateVisibility();
 
     }
     else if (choice == 'spread') {
-        if (window.mchart) {
-        window.mchart.destroy();
-        spread();
-        }
+        if (!window.myPolarArea) { spread(); }
+        document.getElementById('ballChart').style.display = "none";
+        document.getElementById('spreadChart').style.display = "initial";
     }
+    updateVisibility();
 }
 
+function setActive(name) {
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(name).className += " active";
+}
 
 window.onload = function() {
-    if (window.myPolarArea) { window.myPolarArea.destroy(); }
-    if (window.mchart) { window.mchart.destroy(); }
-    document.getElementById('graphtype').selectedIndex=1;
+    document.getElementById('spreadChart').style.display = "none";
+    setActive('drop');
     tablegen();
     initdata();
     drop();
-    updateVisibility();
 };

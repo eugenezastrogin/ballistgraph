@@ -26,19 +26,15 @@
         </tr>
     </table>
     </div>
-    <hr />
-    <div id='dropdown'>
-        <select id="graphtype" onchange="menuchange()">
-            <option disabled value="">Выберите график</option>
-            <option value="drop" selected>Падение</option>
-            <option value="energy">Энергия</option>
-            <option value="speed">Скорость</option>
-            <option value="spread">Кучность</option>
-        </select>
+    <div class='tab'>
+        <button class="tablinks" id="drop" onclick="tabchange(this.id)">Падение</button>
+        <button class="tablinks" id="energy" onclick="tabchange(this.id)">Энергия</button>
+        <button class="tablinks" id="speed" onclick="tabchange(this.id)">Скорость</button>
+        <button class="tablinks" id="spread" onclick="tabchange(this.id)">Кучность</button>
     </div>
-    <hr />
     <div id="canvas-holder">
-        <canvas id="ballChart" ></canvas>
+        <canvas id="ballChart"></canvas>
+        <canvas id="spreadChart"></canvas>
     </div>
 </body>
 
