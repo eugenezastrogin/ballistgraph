@@ -41,21 +41,18 @@ tr:hover {background-color:#f5f5f5;}
     max-width: 720px;
     width: 95vw;
 }
-
 .custom-control-input {
   position: absolute;
   z-index: -1;
   opacity: 0;
 }
-
-
 .custom-checkbox {
   min-height: 1rem;
   padding-left: 0;
   margin-right: 0;
   cursor: pointer;
 }
-  .custom-checkbox .custom-control-indicator {
+.custom-control-indicator {
     content: "";
     display: inline-block;
     position: relative;
@@ -68,25 +65,21 @@ tr:hover {background-color:#f5f5f5;}
     transition: background .3s ease;
     vertical-align: middle;
     margin: 0 6px;
-  }
-    .custom-checkbox .custom-control-indicator:after {
+}
+.custom-control-indicator:after {
       content: "";
       position: absolute;
       display: inline-block;
       width: 18px;
       height: 18px;
-      background-color: #f1f1f1;
+      background-color: #CFCFCF;
       border-radius: 21px;
       box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
       left: -2px;
       top: -4px;
       -webkit-transition: left .3s ease, background .3s ease, box-shadow .1s ease;
       transition: left .3s ease, background .3s ease, box-shadow .1s ease;
-    }
-  .custom-checkbox .custom-control-input:checked ~ .custom-control-indicator {
-    background-color: #ADD8E6;
-  }
-    .custom-checkbox .custom-control-input:checked ~ .custom-control-indicator:after {
-      background-color: #ADD8E6;
+}
+.custom-control-input:checked ~ .custom-control-indicator:after {
       left: 15px;
     }

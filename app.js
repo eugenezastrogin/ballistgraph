@@ -229,23 +229,30 @@ function tablegen() {
         var cell4 = currow.insertCell(3);
         cell4.innerHTML = (tkm366[key].price * 0.95).toFixed(2) +'&nbsp₽';
         var cell0 = currow.insertCell(0);
-        cell0.style.backgroundColor = colors[key];
 
         const lbl = document.createElement('label');
-        lbl.className = 'custom-control custom-checkbox';
+        lbl.className = 'custom-checkbox ' + key;
         const chkbx = document.createElement('input');
         chkbx.type = 'checkbox';
         chkbx.className = 'custom-control-input';
-      //  chkbx.style.backgroundColor = colors[key];
         chkbx.checked = true;
         chkbx.id = key;
         chkbx.onclick = function() { checkupdate(this.id); };
-        lbl.appendChild(chkbx);
         const ind = document.createElement('span');
         ind.className = 'custom-control-indicator';
-        lbl.appendChild(ind);
 
+        const styleElem = document.createElement("style");
+        styleElem.innerHTML = "." + key
+            + " .custom-control-input:checked ~ .custom-control-indicator { background-color: "
+            + colors[key] + '}' + "." + key
+            + " .custom-control-input:checked ~ .custom-control-indicator:after { background-color: "
+            + colors[key] + '}'
+
+        document.head.appendChild(styleElem);
+        lbl.appendChild(chkbx);
+        lbl.appendChild(ind);
         cell0.appendChild(lbl);
+
         i += 1;
     }
 }
