@@ -314,7 +314,7 @@ function tabchange(choice) {
                 break;
             case 'drop':
                 window.mchart.data.datasets = graphdata0;
-                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Кучность, мм';
+                window.mchart.options.scales.yAxes[0].scaleLabel.labelString = 'Падение, мм';
                 break;
         }
 
