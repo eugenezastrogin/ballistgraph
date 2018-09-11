@@ -16,20 +16,35 @@ Bullet.prototype = {
 
 const tkm366 = {};
 
-tkm366.eco = new Bullet("Эко", 0.14, 6.5, 80, 19,
+tkm366.name = "366TKM";
+tkm366.show = true;
+tkm366.bullets = {};
+tkm366.bullets.eco = new Bullet("Эко", 0.14, 6.5, 80, 19,
     [0, 10, 0, -80, -150, -250], [810, 700, 600, 515, 480, 440]);
-tkm366.deri = new Bullet("Дери", 0.25, 13.5, 75, 24,
+tkm366.bullets.deri = new Bullet("Дери", 0.25, 13.5, 75, 24,
     [0, 30, 0, -60, -180, -315], [550, 516, 470, 426, 407, 389]);
-tkm366.kion13  = new Bullet("Кион&nbsp13", 0.2, 13, 40, 26,
+tkm366.bullets.kion13 = new Bullet("Кион&nbsp13", 0.2, 13, 40, 26,
     [0, 20, 0, -110, -210, -330], [650, 584, 525, 470, 444, 421]);
-tkm366.kion15 = new Bullet("Кион&nbsp15", 0.23, 15, 70, 27,
+tkm366.bullets.kion15 = new Bullet("Кион&nbsp15", 0.23, 15, 70, 27,
     [0, 30, 0, -130, -230, -370], [600, 546, 497, 451, 430, 410]);
-tkm366.sp13 = new Bullet("SP&nbsp13", 0.2, 12.6, 60, 27,
+tkm366.bullets.sp13 = new Bullet("SP&nbsp13", 0.2, 12.6, 60, 27,
     [0, 20, 0, -120, -230, -370], [620, 545, 490, 434, 409, 388]);
-tkm366.fmj = new Bullet("FMJ", 0.23, 14, 65, 27,
+tkm366.bullets.fmj = new Bullet("FMJ", 0.23, 14, 65, 27,
     [0, 50, 0, -76, -120, -190], [600, 550, 500, 454, 432, 413]);
-tkm366.etna = new Bullet("Этна", 0.19, 12, 35, null,
+tkm366.bullets.etna = new Bullet("Этна", 0.19, 12, 35, null,
     [0, 30, 0, -140, -250, -410], [600, 537, 480, 428, 406, 385]);
+
+const lancaster96 = {};
+
+lancaster96.name = "9.6/53";
+lancaster96.show = false;
+lancaster96.bullets = {};
+lancaster96.bullets.fmj15 = new Bullet("FMJ 15", 0.21, 14.8, 60, 31,
+    [0, 32, 0, -80, NaN, -208], [770, 694, 628, 565, NaN]);
+lancaster96.bullets.fmj15us = new Bullet("FMJ 15 УС", 0.21, 14.8, 60, null,
+    [0, 22, 0, -158, NaN, -333], [571, 516, 467, NaN, NaN]);
+lancaster96.bullets.sp18 = new Bullet("SP 18", "0.25*", 18, 80, 34,
+    [0, 28, 0, -120, NaN, -235], [658, 605, 557, 518, NaN]);
 
 
 const colors = {
@@ -40,6 +55,9 @@ const colors = {
   sp13: 'rgba(220,20,60,1)',
   fmj: 'rgba(255,140,0,1)',
   etna: 'rgba(191,0,139,1)',
+  fmj15: 'rgba(127,70,27,1)',
+  fmj15us: 'rgba(76,187,23,1)',
+  sp18: 'rgba(255,40,17,1)',
 };
 
 const labels_given = [ 0, 50, 100, 150, 175, 200 ];
@@ -50,32 +68,29 @@ var visibilityArr = [];
 var spreaddata = [{data: [], backgroundColor: []}];
 var labeld = [];
 
+function ndiscount(value) { window.discount = value * 0.01; }
+
 function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
 
 function energy(m, v) { return Math.ceil((m*Math.pow(10, -3) * v * v) / 2); }
 
-function initdata() {
-
-    for (var i = 0; i < Object.keys(tkm366).length; i++) {
-        visibilityArr.push(0);
-    }
-
-    for (var key in tkm366) {
+function initdata(cartridges) {
+    for (var key in cartridges) {
         var dropScatter = [];
         var speedScatter = [];
         var energyScatter = [];
         for (var i = 0; i < labels_given.length; i++) {
             dropScatter.push({
                 x: labels_given[i],
-                y: tkm366[key].drop[i]
+                y: cartridges[key].drop[i]
             });
             speedScatter.push({
                 x: labels_given[i],
-                y: tkm366[key].speed[i]
+                y: cartridges[key].speed[i]
             });
             energyScatter.push({
                 x: labels_given[i],
-                y: energy(tkm366[key].weight, tkm366[key].speed[i])
+                y: energy(cartridges[key].weight, cartridges[key].speed[i])
             });
         }
         graphdata0.push({
@@ -110,6 +125,7 @@ function drop() {
             datasets: graphdata0,
         },
         options: {
+            spanGaps: true,
             layout: {
                 padding: {
                     top: 10,
@@ -161,8 +177,6 @@ function drop() {
 }
 
 
-
-
 function spread() {
     var config = {
         data: {
@@ -212,49 +226,55 @@ function spread() {
     window.myPolarArea.aspectRatio = 1;
 }
 
-function tablegen() {
+function tablegen(cartset) {
     var table = document.getElementById('mtable');
-    var i = 1;
-    for (var key in tkm366) {
-        var currow = table.insertRow(i);
+    var show = cartset.show;
+    var cartridges = cartset.bullets;
+    var styleElem = document.createElement("style");
+    for (var key in cartridges) {
+        var currow = table.insertRow(-1);
         currow.style.textAlign = 'center';
+        if (!show) currow.className = 'hidden';
         var cell1 = currow.insertCell(0);
-        cell1.innerHTML = tkm366[key].name;
+        cell1.innerHTML = cartridges[key].name;
         cell1.style.backgroundColor = colors[key].replace(/1\)$/, "0.5)");
         cell1.style.textAlign = 'left';
         var cell2 = currow.insertCell(1);
-        cell2.innerHTML = tkm366[key].bc;
+        cell2.innerHTML = cartridges[key].bc;
         var cell3 = currow.insertCell(2);
-        cell3.innerHTML = tkm366[key].weight +'&nbspг';
+        cell3.innerHTML = cartridges[key].weight +'&nbspг';
         var cell4 = currow.insertCell(3);
-        cell4.innerHTML = (tkm366[key].price * 0.95).toFixed(2) +'&nbsp₽';
+        cell4.id = key + '_price';
+        cell4.innerHTML = finalprice(cartridges[key].price)
         var cell0 = currow.insertCell(0);
+        if (!show) {
+            var cell5 = currow.insertCell(-1);
+            cell5.innerHTML = '9,6';
+        }
 
         const lbl = document.createElement('label');
         lbl.className = 'custom-checkbox ' + key;
         const chkbx = document.createElement('input');
         chkbx.type = 'checkbox';
         chkbx.className = 'custom-control-input';
-        chkbx.checked = true;
+        if (show) chkbx.checked = true;
         chkbx.id = key;
         chkbx.onclick = function() { checkupdate(this.id); };
         const ind = document.createElement('span');
         ind.className = 'custom-control-indicator';
 
-        const styleElem = document.createElement("style");
-        styleElem.innerHTML = "." + key
-            + " .custom-control-input:checked ~ .custom-control-indicator { background-color: "
+        // dynamic colored sliders
+        styleElem.innerHTML += "." + key
+            + " .custom-control-input:checked ~ .custom-control-indicator {background-color: "
             + colors[key] + '}' + "." + key
-            + " .custom-control-input:checked ~ .custom-control-indicator:after { background-color: "
+            + " .custom-control-input:checked ~ .custom-control-indicator:after {background-color: "
             + colors[key] + '}'
 
-        document.head.appendChild(styleElem);
         lbl.appendChild(chkbx);
         lbl.appendChild(ind);
         cell0.appendChild(lbl);
-
-        i += 1;
     }
+    document.head.appendChild(styleElem);
 }
 
 function updateVisibility() {
@@ -269,9 +289,17 @@ function updateVisibility() {
     spreaddata[0].backgroundColor = [];
     labeld = [];
     var i = 0;
-    for (var key in tkm366) {
+    for (var key in tkm366.bullets) {
         if (visibilityArr[i] == 0) {
-            spreaddata[0].data.push(tkm366[key].spread / 2);
+            spreaddata[0].data.push(tkm366.bullets[key].spread / 2);
+            spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, "0.6)"));
+            labeld.push(key);
+        }
+        i++;
+    }
+    for (var key in lancaster96.bullets) {
+        if (visibilityArr[i] == 0) {
+            spreaddata[0].data.push(lancaster96.bullets[key].spread / 2);
             spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, "0.6)"));
             labeld.push(key);
         }
@@ -335,10 +363,65 @@ function setActive(name) {
     document.getElementById(name).className += " active";
 }
 
+function pricecalc() {
+    var box = document.getElementById("discobox")
+    if (box.checked) {
+        ndiscount(document.getElementById("discount").value);
+    }
+    else {
+        ndiscount(0);
+    }
+        priceUpdate();
+}
+
+function priceUpdate() {
+    for (var key in tkm366.bullets) {
+        var cell = document.getElementById(key + '_price')
+        cell.innerHTML = finalprice(tkm366.bullets[key].price)
+    }
+    for (var key in lancaster96.bullets) {
+        var cell = document.getElementById(key + '_price')
+        cell.innerHTML = finalprice(lancaster96.bullets[key].price)
+    }
+}
+
+function finalprice(price) {
+    return parseFloat((price * (1 - window.discount)).toFixed(2)) +'&nbsp₽';
+}
+function show96(box) {
+    if (box.checked) {
+        document.getElementById('lanstyle').innerHTML = ''
+    }
+    else {
+        document.getElementById('lanstyle').innerHTML = ".hidden { display:none }"
+        for (var key in lancaster96.bullets) {
+            if (document.getElementById(key).checked = true)
+                document.getElementById(key).click();
+        }
+    }
+}
+
 window.onload = function() {
+    const hidElem = document.createElement("style");
+    hidElem.innerHTML = ".hidden { display:none }";
+    hidElem.id = 'lanstyle';
+    document.head.appendChild(hidElem);
+
     document.getElementById('spreadChart').style.display = "none";
     setActive('drop');
-    tablegen();
-    initdata();
+
+    for (var i = 0; i < Object.keys(tkm366.bullets).length; i++) {
+        visibilityArr.push(0);
+    }
+    for (var i = 0; i < Object.keys(lancaster96.bullets).length; i++) {
+        visibilityArr.push(1);
+    }
+
+    initdata(tkm366.bullets);
+    initdata(lancaster96.bullets);
+    ndiscount(0);
+    tablegen(tkm366);
+    tablegen(lancaster96);
     drop();
+    updateVisibility();
 };

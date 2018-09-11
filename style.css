@@ -7,16 +7,22 @@ canvas {
     -ms-user-select: none;
 }
 table, th, td {
-    border: 1px solid black;
     border-collapse: collapse;
-    padding: 2px;
     margin-bottom: 10px;
+    padding: 2px;
 }
-tr:hover {background-color:#f5f5f5;}
+table.mtab, table.mtab th, table.mtab td {
+    border: 1px solid black;
+}
+table.mtab tr:hover {background-color:#f5f5f5;}
+table.noBorder, table.noBorder th, table.noBorder td {
+    border: none;
+}
 #drop {width: 25%;}
 #spread {width: 25%;}
 #energy {width: 25%;}
 #speed {width: 25%;}
+#discount { width: 20px; }
 .tab {
     width: 95vw;
     max-width: 700px;
@@ -96,4 +102,4 @@ tr:hover {background-color:#f5f5f5;}
 }
 .custom-control-input:checked ~ .custom-control-indicator:after {
       left: 15px;
-    }
+}

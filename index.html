@@ -18,15 +18,33 @@
         Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
     </h3>
     <div align="center">
-    <table id="mtable">
+    <table class="mtab" id="mtable">
         <tr>
             <th></th>
             <th>Патрон</th>
             <th><abbr title="Баллистический коэффициент">BC</abbr></th>
             <th>Масса</th>
-            <th title="Магазин ТЕМП с 5% скидкой">Цена</th>
+            <th title="Магазин ТЕМП, Климовск">Цена</th>
         </tr>
     </table>
+
+    </div>
+    <div align="center">
+    <table class="noBorder">
+        <tr>
+            <td>
+                <input type="checkbox" id='discobox' name="sale" onchange="pricecalc()">
+                    Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
+                    onchange="ndiscount(this.value); pricecalc()">% скидку
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" name="show_lancaster" onchange="show96(this)">Показывать <b>9,6/53 Lancaster</b>
+            </td>
+        </tr>
+    </table>
+
     </div>
     <div class='tab'>
         <button class="tablinks" id="drop" onclick="tabchange(this.id)">Падение</button>
