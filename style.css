@@ -58,6 +58,7 @@ table.noBorder, table.noBorder th, table.noBorder td {
 #canvas-holder {
     border: solid white 1px;
     margin: 0 auto;
+    margin-bottom: 20px;
     max-width: 720px;
     width: 95vw;
 }

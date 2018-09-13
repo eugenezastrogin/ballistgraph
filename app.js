@@ -8,8 +8,7 @@ var drop_graphdata = [],
   labeld = [];
 
 const labels_given = [ 0, 50, 100, 150, 175, 200 ],
-  tkm366 = {},
-  lancaster96 = {},
+  tkm = {},
   colors = {
     eco: 'rgba(60,179,113,1)',
     deri: 'rgba(30,144,255,1)',
@@ -23,15 +22,18 @@ const labels_given = [ 0, 50, 100, 150, 175, 200 ],
     sp18: 'rgba(255,40,17,1)',
 };
 
+const test = [];
 
-function Bullet(name, bc, weight, spread, price, drop, speed) {
+function Bullet(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
   this.name = name;
   this.bc = bc;
   this.weight = weight;
   this.spread = spread;
-  this.price = price;
+  this.pricek = pricek;
   this.drop = drop;
   this.speed = speed;
+  this.pricet = pricet;
+  this.type = type;
 }
 
 Bullet.prototype = {
@@ -39,33 +41,26 @@ Bullet.prototype = {
 };
 
 
-tkm366.name = '366TKM';
-tkm366.show = true;
-tkm366.bullets = {};
-tkm366.bullets.eco = new Bullet('Эко', 0.14, 6.5, 80, 19,
+tkm.eco = new Bullet('Эко', 0.14, 6.5, 80, 19, 20, "366",
   [0, 10, 0, -80, -150, -250], [810, 700, 600, 515, 480, 440]);
-tkm366.bullets.deri = new Bullet('Дери', 0.25, 13.5, 75, 24,
+tkm.deri = new Bullet('Дери', 0.25, 13.5, 75, 24, 25, "366",
   [0, 30, 0, -60, -180, -315], [550, 516, 470, 426, 407, 389]);
-tkm366.bullets.kion13 = new Bullet('Кион&nbsp13', 0.2, 13, 40, 26,
+tkm.kion13 = new Bullet('Кион&nbsp13', 0.2, 13, 40, 26, 27, "366",
   [0, 20, 0, -110, -210, -330], [650, 584, 525, 470, 444, 421]);
-tkm366.bullets.kion15 = new Bullet('Кион&nbsp15', 0.23, 15, 70, 27,
+tkm.kion15 = new Bullet('Кион&nbsp15', 0.23, 15, 70, 27, 28, "366",
   [0, 30, 0, -130, -230, -370], [600, 546, 497, 451, 430, 410]);
-tkm366.bullets.sp13 = new Bullet('SP&nbsp13', 0.2, 12.6, 60, 27,
+tkm.sp13 = new Bullet('SP&nbsp13', 0.2, 12.6, 60, 27, 30, "366",
   [0, 20, 0, -120, -230, -370], [620, 545, 490, 434, 409, 388]);
-tkm366.bullets.fmj = new Bullet('FMJ', 0.23, 14, 65, 27,
+tkm.fmj = new Bullet('FMJ', 0.23, 14, 65, 27, 28, "366",
   [0, 50, 0, -76, -120, -190], [600, 550, 500, 454, 432, 413]);
-tkm366.bullets.etna = new Bullet('Этна', 0.19, 12, 35, null,
+tkm.etna = new Bullet('Этна', 0.19, 12, 35, null, null, "366",
   [0, 30, 0, -140, -250, -410], [600, 537, 480, 428, 406, 385]);
 
-
-lancaster96.name = '9.6/53';
-lancaster96.show = false;
-lancaster96.bullets = {};
-lancaster96.bullets.fmj15 = new Bullet('FMJ 15', 0.21, 14.8, 60, 31,
+tkm.fmj15 = new Bullet('FMJ 15', 0.21, 14.8, 60, 31, 33, "96",
   [0, 32, 0, -80, NaN, -208], [770, 694, 628, 565, NaN]);
-lancaster96.bullets.fmj15us = new Bullet('FMJ 15 УС', 0.21, 14.8, 60, null,
+tkm.fmj15us = new Bullet('FMJ 15 УС', 0.21, 14.8, 60, 31, 33, "96",
   [0, 22, 0, -158, NaN, -333], [571, 516, 467, NaN, NaN]);
-lancaster96.bullets.sp18 = new Bullet('SP 18', '0.25*', 18, 80, 34,
+tkm.sp18 = new Bullet('SP 18', '0.25?', 18, 80, 34, 36, "96",
   [0, 28, 0, -120, NaN, -235], [658, 605, 557, 518, NaN]);
 
 function ndiscount(value) { window.discount = value * 0.01; }
@@ -137,7 +132,6 @@ function drop() {
       },
       title: {
         display: false,
-        text: '366TKM'
       },
       tooltips: {
         mode: 'point',
@@ -224,16 +218,14 @@ function spread() {
   window.myPolarArea.aspectRatio = 1;
 }
 
-function tablegen(cartset) {
+function tablegen(cartridges) {
   const table = document.getElementById('mtable');
-  const show = cartset.show;
-  const cartridges = cartset.bullets;
   const styleElem = document.createElement('style');
 
   for (let key in cartridges) {
     const currow = table.insertRow(-1);
     currow.style.textAlign = 'center';
-    if (!show) currow.className = 'hidden';
+    if (cartridges[key].type != '366') currow.className = 'hidden';
     const cell1 = currow.insertCell(0);
     cell1.innerHTML = cartridges[key].name;
     cell1.style.backgroundColor = colors[key].replace(/1\)$/, '0.5)');
@@ -243,10 +235,11 @@ function tablegen(cartset) {
     const cell3 = currow.insertCell(2);
     cell3.innerHTML = cartridges[key].weight +'&nbspг';
     const cell4 = currow.insertCell(3);
-    cell4.id = key + '_price';
-    cell4.innerHTML = finalprice(cartridges[key].price)
+    cell4.id = key
+
+    test.push(cell4);
     const cell0 = currow.insertCell(0);
-    if (!show) {
+    if (cartridges[key].type != '366') {
       currow.insertCell(-1).innerHTML = '9,6';
     }
 
@@ -255,7 +248,7 @@ function tablegen(cartset) {
     const chkbx = document.createElement('input');
     chkbx.type = 'checkbox';
     chkbx.className = 'custom-control-input';
-    if (show) chkbx.checked = true;
+    if (cartridges[key].type == '366') chkbx.checked = true;
     chkbx.id = key;
     chkbx.onclick = function() { checkupdate(this.id); };
     const ind = document.createElement('span');
@@ -266,7 +259,7 @@ function tablegen(cartset) {
         + ' .custom-control-input:checked ~ .custom-control-indicator,'
         + `.${key}`
         + ' .custom-control-input:checked ~ .custom-control-indicator:after'
-        + `{background-color: ${colors[key]}}`
+        + `{background-color: ${colors[key]}}`;
 
     lbl.appendChild(chkbx);
     lbl.appendChild(ind);
@@ -287,17 +280,9 @@ function updateVisibility() {
   spreaddata[0].backgroundColor = [];
   labeld = [];
   let i = 0;
-  for (let key in tkm366.bullets) {
+  for (let key in tkm) {
     if (visibilityArr[i] == 0) {
-      spreaddata[0].data.push(tkm366.bullets[key].spread / 2);
-      spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, '0.6)'));
-      labeld.push(key);
-    }
-    i++;
-  }
-  for (let key in lancaster96.bullets) {
-    if (visibilityArr[i] == 0) {
-      spreaddata[0].data.push(lancaster96.bullets[key].spread / 2);
+      spreaddata[0].data.push(tkm[key].spread / 2);
       spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, '0.6)'));
       labeld.push(key);
     }
@@ -368,30 +353,26 @@ function setActive(name) {
 }
 
 function pricecalc() {
-  const box = document.getElementById('discobox')
+  const box = document.getElementById('discobox');
+
   if (box.checked) {
     ndiscount(document.getElementById('discount').value);
   }
   else {
     ndiscount(0);
   }
-    priceUpdate();
-}
 
-function priceUpdate() {
-  for (let key in tkm366.bullets) {
-    const cell = document.getElementById(key + '_price')
-    cell.innerHTML = finalprice(tkm366.bullets[key].price)
+  function finalprice(price) {
+    return parseFloat((price * (1 - window.discount)).toFixed(2)) +'&nbsp₽';
   }
-  for (let key in lancaster96.bullets) {
-    const cell = document.getElementById(key + '_price')
-    cell.innerHTML = finalprice(lancaster96.bullets[key].price)
+
+  if (document.getElementById('temp').checked) {
+    test.forEach(function(x) {x.innerHTML = finalprice(tkm[x.id].pricet);});
+  } else {
+    test.forEach(function(x) {x.innerHTML = finalprice(tkm[x.id].pricek);});
   }
 }
 
-function finalprice(price) {
-  return parseFloat((price * (1 - window.discount)).toFixed(2)) +'&nbsp₽';
-}
 
 function show96(box) {
   if (box.checked) {
@@ -399,9 +380,11 @@ function show96(box) {
   }
   else {
     document.getElementById('lanstyle').innerHTML = '.hidden { display:none }'
-      for (let key in lancaster96.bullets) {
-        const slider = document.getElementById(key);
-        if (slider.checked = true) slider.click();
+      for (let key in tkm) {
+        if (tkm[key].type != '366') {
+          const slider = document.getElementById(key);
+          if (slider.checked = true) slider.click();
+        }
       }
   }
 }
@@ -415,18 +398,18 @@ window.onload = function() {
   document.getElementById('spreadChart').style.display = 'none';
   setActive('drop');
 
-  for (let i = 0; i < Object.keys(tkm366.bullets).length; i++) {
-    visibilityArr.push(0);
-  }
-  for (let i = 0; i < Object.keys(lancaster96.bullets).length; i++) {
-    visibilityArr.push(1);
+  for (let key in tkm) {
+    if (tkm[key].type != '366') {
+      visibilityArr.push(1);
+    } else {
+      visibilityArr.push(0);
+    }
   }
 
-  initdata(tkm366.bullets);
-  initdata(lancaster96.bullets);
+  initdata(tkm);
   ndiscount(0);
-  tablegen(tkm366);
-  tablegen(lancaster96);
+  tablegen(tkm);
   drop();
   updateVisibility();
+  pricecalc();
 };

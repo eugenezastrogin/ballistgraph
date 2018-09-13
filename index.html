@@ -2,60 +2,78 @@
 <html>
 
 <head>
-    <title>Характеристики патронов .366</title>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Интерактивное сравнение характеристик заводских патронов калибра .366 Техкрим" />
-    <meta name="keywords" content="366,.366,.366ТКМ,Техкрим,366TKM,патроны,эко,дери,кион,sp13,fmj,этна" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-    <noscript>Ваш браузер не поддерживает JavaScript или он отключeн :(</noscript>
-    <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Характеристики патронов .366</title>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Интерактивное сравнение характеристик заводских патронов калибра .366 Техкрим" />
+  <meta name="keywords" content="366,.366,.366ТКМ,Техкрим,366TKM,патроны,эко,дери,кион,sp13,fmj,этна" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+  <noscript>Ваш браузер не поддерживает JavaScript или он отключeн :(</noscript>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-    <h3 class="header">
-        Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
-    </h3>
-    <div align="center">
-    <table class="mtab" id="mtable">
-        <tr>
-            <th></th>
-            <th>Патрон</th>
-            <th><abbr title="Баллистический коэффициент">BC</abbr></th>
-            <th>Масса</th>
-            <th title="Магазин ТЕМП, Климовск">Цена</th>
-        </tr>
-    </table>
+  <h3 class="header">
+    Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
+  </h3>
 
-    </div>
-    <div align="center">
-    <table class="noBorder">
-        <tr>
-            <td>
-                <input type="checkbox" id='discobox' name="sale" onchange="pricecalc()">
-                    Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
-                    onchange="ndiscount(this.value); pricecalc()">% скидку
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="checkbox" name="show_lancaster" onchange="show96(this)">Показывать <b>9,6/53 Lancaster</b>
-            </td>
-        </tr>
-    </table>
+  <div align="center">
+  <table class="mtab" id="mtable">
+    <tr>
+      <th></th>
+      <th>Патрон</th>
+      <th><abbr title="Баллистический коэффициент">BC</abbr></th>
+      <th>Масса</th>
+      <th title="Магазин ТЕМП, Климовск">Цена</th>
+    </tr>
+  </table>
+  </div>
 
-    </div>
-    <div class='tab'>
-        <button class="tablinks" id="drop" onclick="tabchange(this.id)">Падение</button>
-        <button class="tablinks" id="energy" onclick="tabchange(this.id)">Энергия</button>
-        <button class="tablinks" id="speed" onclick="tabchange(this.id)">Скорость</button>
-        <button class="tablinks" id="spread" onclick="tabchange(this.id)">Кучность</button>
-    </div>
-    <div id="canvas-holder">
-        <canvas id="ballChart"></canvas>
-        <canvas id="spreadChart"></canvas>
-    </div>
+  <div align="center">
+    <form>
+      <input type="radio" id='temp' value="temp" name="pricesource" onchange="pricecalc()" checked>
+        Цены магазина <a href="https://www.tempgun.ru/">ТЕМП</a>
+      <input type="radio" id='techcrim' value="techcrim" name="pricesource" onchange="pricecalc()">
+        Цены <a href="http://techcrim.ru/wp-content/uploads/price/Price.pdf">Техкрима</a>
+    </form>
+  </div>
+
+  <div align="center">
+  <table class="noBorder">
+    <tr>
+      <td>
+        <input type="checkbox" id='discobox' name="sale" onchange="pricecalc()">
+          Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
+          onchange="ndiscount(this.value); pricecalc()">% скидку
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="checkbox" name="show_lancaster" onchange="show96(this)">
+          Показывать <b>9,6/53 Lancaster</b>
+      </td>
+    </tr>
+  </table>
+  </div>
+
+  <div class='tab'>
+    <button class="tablinks" id="drop" onclick="tabchange(this.id)">Падение</button>
+    <button class="tablinks" id="energy" onclick="tabchange(this.id)">Энергия</button>
+    <button class="tablinks" id="speed" onclick="tabchange(this.id)">Скорость</button>
+    <button class="tablinks" id="spread" onclick="tabchange(this.id)">Кучность</button>
+  </div>
+
+  <div id="canvas-holder">
+    <canvas id="ballChart"></canvas>
+    <canvas id="spreadChart"></canvas>
+  </div>
+
+  <div align="center">
+    <font size="1" color="grey">
+      Email для замечаний: testerowtes at яндекс точка ком
+    </font>
+  </div>
 </body>
 
 </html>
