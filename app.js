@@ -221,8 +221,19 @@ function spread() {
 function tablegen(cartridges) {
   const table = document.getElementById('mtable');
   const styleElem = document.createElement('style');
+  let nolabel = true;
 
   for (let key in cartridges) {
+    if (cartridges[key].type != '366' && nolabel) {
+      const sep = table.insertRow(-1);
+      const lab = sep.insertCell(-1);
+      sep.className = 'hidden';
+      lab.style.textAlign = 'center';
+      lab.textContent = '9,6/53 Lancaster';
+      lab.style.fontWeight = 'bold';
+      lab.colSpan = 5;
+      nolabel = false;
+    }
     const currow = table.insertRow(-1);
     currow.style.textAlign = 'center';
     if (cartridges[key].type != '366') currow.className = 'hidden';
@@ -231,17 +242,14 @@ function tablegen(cartridges) {
     cell1.style.backgroundColor = colors[key].replace(/1\)$/, '0.5)');
     cell1.style.textAlign = 'left';
     const cell2 = currow.insertCell(1);
-    cell2.innerHTML = cartridges[key].bc;
+    cell2.textContent = cartridges[key].bc;
     const cell3 = currow.insertCell(2);
     cell3.innerHTML = cartridges[key].weight +'&nbspг';
     const cell4 = currow.insertCell(3);
-    cell4.id = key
+    cell4.id = key;
 
     test.push(cell4);
     const cell0 = currow.insertCell(0);
-    if (cartridges[key].type != '366') {
-      currow.insertCell(-1).innerHTML = '9,6';
-    }
 
     const lbl = document.createElement('label');
     lbl.className = 'custom-checkbox ' + key;
@@ -259,7 +267,7 @@ function tablegen(cartridges) {
         + ' .custom-control-input:checked ~ .custom-control-indicator,'
         + `.${key}`
         + ' .custom-control-input:checked ~ .custom-control-indicator:after'
-        + `{background-color: ${colors[key]}}`;
+        + `{background-color: ${colors[key]}}`
 
     lbl.appendChild(chkbx);
     lbl.appendChild(ind);
