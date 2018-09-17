@@ -1,4 +1,4 @@
-//'use strict'; // Use ECMAScript 5 strict mode in browsers that support it
+'use strict'; // Use ECMAScript 5 strict mode in browsers that support it
 
 var drop_graphdata = [],
   speed_graphdata = [],
@@ -8,6 +8,7 @@ var drop_graphdata = [],
   labeld = [];
 
 const labels_given = [ 0, 50, 100, 150, 175, 200 ],
+  discountM = new DiscountData(),
   tkm = {},
   colors = {
     eco: 'rgba(60,179,113,1)',
@@ -22,8 +23,6 @@ const labels_given = [ 0, 50, 100, 150, 175, 200 ],
     sp18: 'rgba(255,40,17,1)',
 };
 
-const test = [];
-
 function Bullet(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
   this.name = name;
   this.bc = bc;
@@ -36,8 +35,71 @@ function Bullet(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
   this.type = type;
 }
 
-Bullet.prototype = {
-  toString: function() { return `Патрон ${this.name}`; }
+Bullet.prototype.toString = function() { return `Патрон ${this.name}`; };
+
+function Price_cell(node, bullet) {
+  this.node = node;
+  this.bullet = bullet;
+}
+
+Price_cell.prototype.toString = function() {
+  return `Cell with ${this.bullet.name} price`;
+};
+
+Price_cell.prototype.update = function(x) {this.node.innerHTML = x;};
+
+function DiscountData() {
+  this.shop = 'temp';
+  this.discount_works = false;
+  this.discount = 0;
+  this.observers = [];
+}
+
+DiscountData.prototype.toString = function() {
+  return `Cell with price, ${this.discount}`;
+};
+
+DiscountData.prototype.registerObserver = function(observer) {
+  if (!this.observers.includes(observer)) {
+    this.observers.push(observer);
+  }
+};
+
+DiscountData.prototype.removeObserver = function(observer) {
+  if (this.observers.includes(observer)) {
+    let ob = this.observers.indexOf(observer);
+    this.observers.splice(ob,1);
+  }
+};
+
+DiscountData.prototype.applyDiscount = function() {this.discount_works = true;};
+DiscountData.prototype.basePrice = function() {this.discount_works = false;};
+DiscountData.prototype.setDiscount = function(x) {this.discount = x * 0.01;};
+DiscountData.prototype.setShop = function(x) {this.shop = x;};
+DiscountData.prototype.notifyObservers = function() {
+
+  function finalprice(x) {
+    if (x!==null) {
+      return parseFloat(x.toFixed(2)) +'&nbsp₽';
+    } else {
+      return 0 +'&nbsp₽';
+    }
+  }
+
+  for (let observer of this.observers) {
+    let price;
+    if (this.shop === 'temp') {
+      price = observer.bullet.pricet;
+    } else {
+      price = observer.bullet.pricek;
+    }
+    if (this.discount_works) {
+      price = price * (1 - this.discount);
+    }
+
+
+    observer.update(finalprice(price));
+  }
 };
 
 
@@ -62,8 +124,6 @@ tkm.fmj15us = new Bullet('FMJ 15 УС', 0.21, 14.8, 60, 31, 33, "96",
   [0, 22, 0, -158, NaN, -333], [571, 516, 467, NaN, NaN]);
 tkm.sp18 = new Bullet('SP 18', '0.25?', 18, 80, 34, 36, "96",
   [0, 28, 0, -120, NaN, -235], [658, 605, 557, 518, NaN]);
-
-function ndiscount(value) { window.discount = value * 0.01; }
 
 function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
 
@@ -246,9 +306,10 @@ function tablegen(cartridges) {
     const cell3 = currow.insertCell(2);
     cell3.innerHTML = cartridges[key].weight +'&nbspг';
     const cell4 = currow.insertCell(3);
-    cell4.id = key;
+ //   cell4.id = key
+    const observ = new Price_cell(cell4, cartridges[key]);
+    discountM.registerObserver(observ);
 
-    test.push(cell4);
     const cell0 = currow.insertCell(0);
 
     const lbl = document.createElement('label');
@@ -267,7 +328,7 @@ function tablegen(cartridges) {
         + ' .custom-control-input:checked ~ .custom-control-indicator,'
         + `.${key}`
         + ' .custom-control-input:checked ~ .custom-control-indicator:after'
-        + `{background-color: ${colors[key]}}`
+        + `{background-color: ${colors[key]}}`;
 
     lbl.appendChild(chkbx);
     lbl.appendChild(ind);
@@ -360,27 +421,23 @@ function setActive(name) {
   document.getElementById(name).className += ' active';
 }
 
-function pricecalc() {
-  const box = document.getElementById('discobox');
+function saleupd() {
+  if (document.getElementById('temp').checked) {
+    discountM.setShop('temp');
+  } else {
+    discountM.setShop('tkm');
+  }
 
-  if (box.checked) {
-    ndiscount(document.getElementById('discount').value);
+  discountM.setDiscount(document.getElementById('discount').value);
+
+  if (document.getElementById('discobox').checked) {
+    discountM.applyDiscount();
   }
   else {
-    ndiscount(0);
+    discountM.basePrice();
   }
-
-  function finalprice(price) {
-    return parseFloat((price * (1 - window.discount)).toFixed(2)) +'&nbsp₽';
-  }
-
-  if (document.getElementById('temp').checked) {
-    test.forEach(function(x) {x.innerHTML = finalprice(tkm[x.id].pricet);});
-  } else {
-    test.forEach(function(x) {x.innerHTML = finalprice(tkm[x.id].pricek);});
-  }
+  discountM.notifyObservers();
 }
-
 
 function show96(box) {
   if (box.checked) {
@@ -415,9 +472,8 @@ window.onload = function() {
   }
 
   initdata(tkm);
-  ndiscount(0);
   tablegen(tkm);
   drop();
   updateVisibility();
-  pricecalc();
+  saleupd();
 };
