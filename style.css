@@ -1,106 +1,135 @@
 .header {
-    text-align: center;
+  text-align: center;
 }
+
 canvas {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
-table, th, td {
-    border-collapse: collapse;
-    margin-bottom: 10px;
-    padding: 2px;
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  padding: 2px;
 }
-table.mtab, table.mtab th, table.mtab td {
-    border: 1px solid black;
+
+table.mtab,
+table.mtab th,
+table.mtab td {
+  border: 1px solid black;
 }
+
 table.mtab tr:hover {background-color:#f5f5f5;}
-table.noBorder, table.noBorder th, table.noBorder td {
-    border: none;
+
+table.noBorder,
+table.noBorder th,
+table.noBorder td {
+  border: none;
 }
+
 #drop {width: 25%;}
 #spread {width: 25%;}
 #energy {width: 25%;}
 #speed {width: 25%;}
-#discount { width: 20px; }
+#discount {width: 20px;}
+
 .tab {
-    width: 95vw;
-    max-width: 700px;
-    min-width: 300px;
-    margin: 0 auto;
-    background-color: #f1f1f1;
-    }
+  background-color: #f1f1f1;
+  max-width: 700px;
+  min-width: 300px;
+  margin: 0 auto;
+  width: 95vw;
+  }
+
 .tab button {
-    background-color: inherit;
-    border: 1px solid black;
-    font-weight: bold;
-    font-size: 0.8em;
-    padding: 6px 4px;
-    cursor: pointer; /* Pointer/hand icon */
-    float: left; /* Float the buttons side by side */
+  background-color: inherit;
+  border: 1px solid black;
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+  font-weight: bold;
+  font-size: .8em;
+  padding: 6px 4px;
 }
+
 .tab button:not(:last-child) {
-    border-right: none; /* Prevent double borders */
+  border-right: none; /* Prevent double borders */
 }
+
 /* Clear floats (clearfix hack) */
 .tab:after {
-    content: "";
-    clear: both;
-    display: table;
+  clear: both;
+  content: '';
+  display: table;
 }
+
 /* Add a background color on hover */
 .tab button:hover {
-    background-color: #ddd;
+  background-color: #ddd;
 }
+
 .tab button.active {
-    background-color: #ccc;
+  background-color: #ccc;
 }
+
 #canvas-holder {
-    border: solid white 1px;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    max-width: 720px;
-    width: 95vw;
+  border: solid white 1px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  max-width: 720px;
+  width: 95vw;
 }
+
 .custom-control-input {
+  opacity: 0;
   position: absolute;
   z-index: -1;
-  opacity: 0;
 }
+
 .custom-checkbox {
+  cursor: pointer;
+  margin-right: 0;
   min-height: 1rem;
   padding-left: 0;
-  margin-right: 0;
-  cursor: pointer;
 }
+
 .custom-control-indicator {
-    content: "";
-    display: inline-block;
-    position: relative;
-    width: 30px;
-    height: 10px;
-    border-radius: 15px;
-    margin-right: 10px;
-    background-color: #818181;
-    -webkit-transition: background .3s ease;
-    transition: background .3s ease;
-    vertical-align: middle;
-    margin: 0 6px;
+  background-color: #818181;
+  border-radius: 15px;
+  content: '';
+  display: inline-block;
+  height: 10px;
+  margin-right: 10px;
+  margin: 0 6px;
+  position: relative;
+  transition: background .3s ease;
+  vertical-align: middle;
+  width: 30px;
+  -webkit-transition: background .3s ease;
 }
+
 .custom-control-indicator:after {
-      content: "";
-      position: absolute;
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      background-color: #CFCFCF;
-      border-radius: 21px;
-      box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
-      left: -2px;
-      top: -4px;
-      -webkit-transition: left .3s ease, background .3s ease, box-shadow .1s ease;
-      transition: left .3s ease, background .3s ease, box-shadow .1s ease;
+  background-color: #CFCFCF;
+  border-radius: 21px;
+  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
+  content: '';
+  display: inline-block;
+  height: 18px;
+  left: -2px;
+  position: absolute;
+  top: -4px;
+  -webkit-transition: left .3s ease, background .3s ease, box-shadow .1s ease;
+  transition: left .3s ease, background .3s ease, box-shadow .1s ease;
+  width: 18px;
 }
+
 .custom-control-input:checked ~ .custom-control-indicator:after {
-      left: 15px;
+  left: 15px;
+}
+
+.smallfont {
+  color: grey;
+  font-size: .7em;
 }

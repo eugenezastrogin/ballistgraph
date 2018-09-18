@@ -1,79 +1,72 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<title>Характеристики патронов .366</title>
+<meta charset="utf-8">
+<meta name="description" content="Интерактивное сравнение характеристик заводских патронов калибра .366 Техкрим и 9,6/53 Lancaster">
+<meta name="keywords" content="366,.366,.366ТКМ,Техкрим,366TKM,патроны,эко,дери,кион,sp13,fmj,этна">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<script src="app.js"></script>
+<noscript>Ваш браузер не поддерживает JavaScript или он отключeн :(</noscript>
+<link rel="stylesheet" href="style.css">
 
-<head>
-  <title>Характеристики патронов .366</title>
-  <meta charset="UTF-8" />
-  <meta name="description" content="Интерактивное сравнение характеристик заводских патронов калибра .366 Техкрим и 9,6/53 Lancaster" />
-  <meta name="keywords" content="366,.366,.366ТКМ,Техкрим,366TKM,патроны,эко,дери,кион,sp13,fmj,этна" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-  <script type="text/javascript" src="app.js"></script>
-  <noscript>Ваш браузер не поддерживает JavaScript или он отключeн :(</noscript>
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
+<h3 class="header">
+  Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
+</h3>
 
-<body>
-  <h3 class="header">
-    Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
-  </h3>
+<div align="center">
+<table class="mtab" id="mtable">
+  <tr>
+    <th>
+    <th>Патрон
+    <th><abbr title="Баллистический коэффициент">BC</abbr>
+    <th>Масса
+    <th>Цена
+</table>
+</div>
 
-  <div align="center">
-  <table class="mtab" id="mtable">
-    <tr>
-      <th></th>
-      <th>Патрон</th>
-      <th><abbr title="Баллистический коэффициент">BC</abbr></th>
-      <th>Масса</th>
-      <th title="Магазин ТЕМП, Климовск">Цена</th>
-    </tr>
-  </table>
-  </div>
+<div align="center">
+  <form>
+    <input type="radio" id='temp' value="temp" name="pricesource" onchange="priceUpdate()" checked>
+      <label for="temp">
+        Цена&nbsp;<a href="https://www.tempgun.ru/">ТЕМПa</a>
+      </label>
+    <input type="radio" id='techcrim' value="techcrim" name="pricesource" onchange="priceUpdate()">
+      <label for="techcrim">
+        Цена&nbsp;<a href="http://techcrim.ru/wp-content/uploads/price/Price.pdf">Техкрима</a>
+      </label>
+  </form>
+</div>
 
-  <div align="center">
-    <form>
-      <input type="radio" id='temp' value="temp" name="pricesource" onchange="saleupd()" checked>
-        Цены магазина <a href="https://www.tempgun.ru/">ТЕМП</a>
-      <input type="radio" id='techcrim' value="techcrim" name="pricesource" onchange="saleupd()">
-        Цены <a href="http://techcrim.ru/wp-content/uploads/price/Price.pdf">Техкрима</a>
-    </form>
-  </div>
-
-  <div align="center">
-  <table class="noBorder">
-    <tr>
-      <td>
-        <input type="checkbox" id='discobox' name="sale" onchange="saleupd()">
-          Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
-          onchange="saleupd()">% скидку
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="checkbox" name="show_lancaster" onchange="show96(this)">
+<div align="center">
+<table class="noBorder">
+  <tr>
+    <td>
+      <input type="checkbox" id='discobox' name="sale" onchange="priceUpdate()">
+       <label for="discobox">
+         Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
+         onchange="priceUpdate()">% скидку
+       </label>
+  <tr>
+    <td>
+      <input type="checkbox" id="l96" name="show_lancaster" onchange="show96(this)">
+        <label for="l96">
           Показывать <b>9,6/53 Lancaster</b>
-      </td>
-    </tr>
-  </table>
-  </div>
+        </label>
+</table>
+</div>
 
-  <div class='tab'>
-    <button class="tablinks" id="drop" onclick="tabchange(this.id)">Падение</button>
-    <button class="tablinks" id="energy" onclick="tabchange(this.id)">Энергия</button>
-    <button class="tablinks" id="speed" onclick="tabchange(this.id)">Скорость</button>
-    <button class="tablinks" id="spread" onclick="tabchange(this.id)">Кучность</button>
-  </div>
+<div class='tab'>
+  <button class="tablinks" id="drop" onclick="tabChange(this.id)">Падение</button>
+  <button class="tablinks" id="energy" onclick="tabChange(this.id)">Энергия</button>
+  <button class="tablinks" id="speed" onclick="tabChange(this.id)">Скорость</button>
+  <button class="tablinks" id="spread" onclick="tabChange(this.id)">Кучность</button>
+</div>
 
-  <div id="canvas-holder">
-    <canvas id="ballChart"></canvas>
-    <canvas id="spreadChart"></canvas>
-  </div>
+<div id="canvas-holder">
+  <canvas id="ballChart"></canvas>
+  <canvas id="spreadChart"></canvas>
+</div>
 
-  <div align="center">
-    <font size="1" color="grey">
-      Email для замечаний: testerowtes at яндекс точка ком
-    </font>
-  </div>
-</body>
-
-</html>
+<div class="smallfont" align="center">
+  Емаil для замечаний: testerowtes at яндекс точка ком
+</div>

@@ -1,16 +1,117 @@
 'use strict'; // Use ECMAScript 5 strict mode in browsers that support it
 
-var drop_graphdata = [],
-  speed_graphdata = [],
-  energy_graphdata = [],
-  visibilityArr = [],
-  spreaddata = [{data: [], backgroundColor: []}],
-  labeld = [];
+// Classes
+class Bullet {
+  constructor(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
+    this.name = name;
+    this.bc = bc;
+    this.weight = weight;
+    this.spread = spread;
+    this.pricek = pricek;
+    this.drop = drop;
+    this.speed = speed;
+    this.pricet = pricet;
+    this.type = type;
+  }
 
-const labels_given = [ 0, 50, 100, 150, 175, 200 ],
-  discountM = new DiscountData(),
-  tkm = {},
-  colors = {
+  toString() {
+    return `Патрон ${this.name}`;
+  }
+}
+
+class PriceCell {
+  constructor(node, bullet) {
+    this.node = node;
+    this.bullet = bullet;
+  }
+
+  toString() {
+    return `Cell Object ${this.bullet.name}`;
+  }
+
+  update(x) {
+    this.node.innerHTML = x;
+  }
+}
+
+class DiscountData {
+  constructor() {
+    this.shop = 'temp';
+    this.discountActive = false;
+    this.discount = 0;
+    this.observers = [];
+  }
+
+  toString() {
+    return 'DiscountData Object';
+  }
+
+  registerObserver(observer) {
+    if (!this.observers.includes(observer)) {
+      this.observers.push(observer);
+    }
+  }
+
+  removeObserver(observer) {
+    if (this.observers.includes(observer)) {
+      let ob = this.observers.indexOf(observer);
+      this.observers.splice(ob,1);
+    }
+  }
+
+  applyDiscount() {
+    this.discountActive = true;
+  }
+
+  basePrice() {
+    this.discountActive = false;
+  }
+
+  setDiscount(x) {
+    this.discount = x * 0.01;
+  }
+
+  setShop(shop) {
+    this.shop = shop;
+  }
+
+  notifyObservers() {
+    for (let observer of this.observers) {
+      let price;
+      if (this.shop === 'temp') {
+        price = observer.bullet.pricet;
+      } else {
+        price = observer.bullet.pricek;
+      }
+      if (this.discountActive) {
+        price = price * (1 - this.discount);
+      }
+
+      const finalprice = (x) => {
+        if (x !== null) {
+          return parseFloat(x.toFixed(2)) +'&nbsp₽';
+        } else {
+          return 0 +'&nbsp₽';
+        }
+      }
+      observer.update(finalprice(price));
+    }
+  }
+}
+
+// Variables
+let dropGraphdata = [],
+  speedGraphdata = [],
+  energyGraphdata = [],
+  visibilityArr = [],
+  spreadData = [{data: [], backgroundColor: []}],
+  labelD = [];
+
+// Constants
+const LABELS_GIVEN = [ 0, 50, 100, 150, 175, 200 ],
+  DISCOUNT_OBJ = new DiscountData(),
+  TKM = {},
+  COLORS = {
     eco: 'rgba(60,179,113,1)',
     deri: 'rgba(30,144,255,1)',
     kion13: 'rgba(80,80,80,1)',
@@ -20,152 +121,74 @@ const labels_given = [ 0, 50, 100, 150, 175, 200 ],
     etna: 'rgba(191,0,139,1)',
     fmj15: 'rgba(127,70,27,1)',
     fmj15us: 'rgba(76,187,23,1)',
-    sp18: 'rgba(255,40,17,1)',
-};
+    sp18: 'rgba(255,192,203,1)',
+  };
 
-function Bullet(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
-  this.name = name;
-  this.bc = bc;
-  this.weight = weight;
-  this.spread = spread;
-  this.pricek = pricek;
-  this.drop = drop;
-  this.speed = speed;
-  this.pricet = pricet;
-  this.type = type;
-}
-
-Bullet.prototype.toString = function() { return `Патрон ${this.name}`; };
-
-function Price_cell(node, bullet) {
-  this.node = node;
-  this.bullet = bullet;
-}
-
-Price_cell.prototype.toString = function() {
-  return `Cell with ${this.bullet.name} price`;
-};
-
-Price_cell.prototype.update = function(x) {this.node.innerHTML = x;};
-
-function DiscountData() {
-  this.shop = 'temp';
-  this.discount_works = false;
-  this.discount = 0;
-  this.observers = [];
-}
-
-DiscountData.prototype.toString = function() {
-  return `Cell with price, ${this.discount}`;
-};
-
-DiscountData.prototype.registerObserver = function(observer) {
-  if (!this.observers.includes(observer)) {
-    this.observers.push(observer);
-  }
-};
-
-DiscountData.prototype.removeObserver = function(observer) {
-  if (this.observers.includes(observer)) {
-    let ob = this.observers.indexOf(observer);
-    this.observers.splice(ob,1);
-  }
-};
-
-DiscountData.prototype.applyDiscount = function() {this.discount_works = true;};
-DiscountData.prototype.basePrice = function() {this.discount_works = false;};
-DiscountData.prototype.setDiscount = function(x) {this.discount = x * 0.01;};
-DiscountData.prototype.setShop = function(x) {this.shop = x;};
-DiscountData.prototype.notifyObservers = function() {
-
-  function finalprice(x) {
-    if (x!==null) {
-      return parseFloat(x.toFixed(2)) +'&nbsp₽';
-    } else {
-      return 0 +'&nbsp₽';
-    }
-  }
-
-  for (let observer of this.observers) {
-    let price;
-    if (this.shop === 'temp') {
-      price = observer.bullet.pricet;
-    } else {
-      price = observer.bullet.pricek;
-    }
-    if (this.discount_works) {
-      price = price * (1 - this.discount);
-    }
-
-
-    observer.update(finalprice(price));
-  }
-};
-
-
-tkm.eco = new Bullet('Эко', 0.14, 6.5, 80, 19, 20, "366",
+TKM.eco = new Bullet('Эко', 0.14, 6.5, 80, 19, 20, '366',
   [0, 10, 0, -80, -150, -250], [810, 700, 600, 515, 480, 440]);
-tkm.deri = new Bullet('Дери', 0.25, 13.5, 75, 24, 25, "366",
+TKM.deri = new Bullet('Дери', 0.25, 13.5, 75, 24, 25, '366',
   [0, 30, 0, -60, -180, -315], [550, 516, 470, 426, 407, 389]);
-tkm.kion13 = new Bullet('Кион&nbsp13', 0.2, 13, 40, 26, 27, "366",
+TKM.kion13 = new Bullet('Кион&nbsp13', 0.2, 13, 40, 26, 27, '366',
   [0, 20, 0, -110, -210, -330], [650, 584, 525, 470, 444, 421]);
-tkm.kion15 = new Bullet('Кион&nbsp15', 0.23, 15, 70, 27, 28, "366",
+TKM.kion15 = new Bullet('Кион&nbsp15', 0.23, 15, 70, 27, 28, '366',
   [0, 30, 0, -130, -230, -370], [600, 546, 497, 451, 430, 410]);
-tkm.sp13 = new Bullet('SP&nbsp13', 0.2, 12.6, 60, 27, 30, "366",
+TKM.sp13 = new Bullet('SP&nbsp13', 0.2, 12.6, 60, 27, 30, '366',
   [0, 20, 0, -120, -230, -370], [620, 545, 490, 434, 409, 388]);
-tkm.fmj = new Bullet('FMJ', 0.23, 14, 65, 27, 28, "366",
+TKM.fmj = new Bullet('FMJ', 0.23, 14, 65, 27, 28, '366',
   [0, 50, 0, -76, -120, -190], [600, 550, 500, 454, 432, 413]);
-tkm.etna = new Bullet('Этна', 0.19, 12, 35, null, null, "366",
+TKM.etna = new Bullet('Этна', 0.19, 12, 35, null, null, '366',
   [0, 30, 0, -140, -250, -410], [600, 537, 480, 428, 406, 385]);
 
-tkm.fmj15 = new Bullet('FMJ 15', 0.21, 14.8, 60, 31, 33, "96",
+TKM.fmj15 = new Bullet('FMJ 15', 0.21, 14.8, 60, 31, 33, '96',
   [0, 32, 0, -80, NaN, -208], [770, 694, 628, 565, NaN]);
-tkm.fmj15us = new Bullet('FMJ 15 УС', 0.21, 14.8, 60, 31, 33, "96",
+TKM.fmj15us = new Bullet('<abbr title="Уменьшенная Скорость">FMJ 15 УС</abbr>',
+  0.21, 14.8, 60, 31, 33, '96',
   [0, 22, 0, -158, NaN, -333], [571, 516, 467, NaN, NaN]);
-tkm.sp18 = new Bullet('SP 18', '0.25?', 18, 80, 34, 36, "96",
+TKM.sp18 = new Bullet('SP 18', '0.25?', 18, 80, 34, 36, '96',
   [0, 28, 0, -120, NaN, -235], [658, 605, 557, 518, NaN]);
 
+// Functions
 function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
 
 function energy(m, v) { return Math.ceil((m*Math.pow(10, -3) * v * v) / 2); }
 
-function initdata(cartridges) {
+function initData(cartridges) {
   for (let key in cartridges) {
     let dropScatter = [];
     let speedScatter = [];
     let energyScatter = [];
-    for (let i = 0; i < labels_given.length; i++) {
+    for (let i = 0; i < LABELS_GIVEN.length; i++) {
       dropScatter.push({
-        x: labels_given[i],
+        x: LABELS_GIVEN[i],
         y: cartridges[key].drop[i]
       });
       speedScatter.push({
-        x: labels_given[i],
+        x: LABELS_GIVEN[i],
         y: cartridges[key].speed[i]
       });
       energyScatter.push({
-        x: labels_given[i],
+        x: LABELS_GIVEN[i],
         y: energy(cartridges[key].weight, cartridges[key].speed[i])
       });
     }
-    drop_graphdata.push({
+    dropGraphdata.push({
       label: key,
-      backgroundColor: colors[key],
-      borderColor: colors[key],
+      backgroundColor: COLORS[key],
+      borderColor: COLORS[key],
       data: dropScatter,
       fill: false,
     });
-    speed_graphdata.push({
+    speedGraphdata.push({
       label: key,
-      backgroundColor: colors[key],
-      borderColor: colors[key],
+      backgroundColor: COLORS[key],
+      borderColor: COLORS[key],
       data: speedScatter,
       fill: false,
     });
-    energy_graphdata.push({
+    energyGraphdata.push({
       label: key,
-      backgroundColor: colors[key],
-      borderColor: colors[key],
+      backgroundColor: COLORS[key],
+      borderColor: COLORS[key],
       data: energyScatter,
       fill: false,
     });
@@ -176,7 +199,7 @@ function drop() {
   var config = {
     type: 'line',
     data: {
-      datasets: drop_graphdata,
+      datasets: dropGraphdata,
     },
     options: {
       spanGaps: true,
@@ -224,17 +247,16 @@ function drop() {
       }
     }
   };
-  const ctx = document.getElementById('ballChart').getContext('2d');
-  window.mchart = new Chart(ctx, config);
+  const CTX = document.getElementById('ballChart').getContext('2d');
+  window.mchart = new Chart(CTX, config);
   window.mchart.aspectRatio = 1;
 }
-
 
 function spread() {
   var config = {
     data: {
-      datasets: spreaddata,
-      labels: labeld,
+      datasets: spreadData,
+      labels: labelD,
     },
     options: {
       layout: {
@@ -273,54 +295,54 @@ function spread() {
       }
     }
   };
-  const ctx = document.getElementById('spreadChart');
-  window.myPolarArea = Chart.PolarArea(ctx, config);
+  const CTX = document.getElementById('spreadChart');
+  window.myPolarArea = Chart.PolarArea(CTX, config);
   window.myPolarArea.aspectRatio = 1;
 }
 
-function tablegen(cartridges) {
-  const table = document.getElementById('mtable');
+function tableGenerate(cartridges) {
+  const TABLE = document.getElementById('mtable');
   const styleElem = document.createElement('style');
-  let nolabel = true;
+  let oneShot = false;
 
   for (let key in cartridges) {
-    if (cartridges[key].type != '366' && nolabel) {
-      const sep = table.insertRow(-1);
-      const lab = sep.insertCell(-1);
-      sep.className = 'hidden';
-      lab.style.textAlign = 'center';
-      lab.textContent = '9,6/53 Lancaster';
-      lab.style.fontWeight = 'bold';
-      lab.colSpan = 5;
-      nolabel = false;
+    if (cartridges[key].type !== '366' && !oneShot) {
+      let separator = TABLE.insertRow(-1);
+      let labelLancaster = separator.insertCell(-1);
+      separator.className = 'hidden';
+      labelLancaster.style.textAlign = 'center';
+      labelLancaster.textContent = '9,6/53 Lancaster';
+      labelLancaster.style.fontWeight = 'bold';
+      labelLancaster.colSpan = 5;
+      oneShot = true;
     }
-    const currow = table.insertRow(-1);
-    currow.style.textAlign = 'center';
-    if (cartridges[key].type != '366') currow.className = 'hidden';
-    const cell1 = currow.insertCell(0);
+    let currentRow = TABLE.insertRow(-1);
+    currentRow.style.textAlign = 'center';
+    if (cartridges[key].type !== '366') currentRow.className = 'hidden';
+    let cell1 = currentRow.insertCell(0);
     cell1.innerHTML = cartridges[key].name;
-    cell1.style.backgroundColor = colors[key].replace(/1\)$/, '0.5)');
+    cell1.style.backgroundColor = COLORS[key].replace(/1\)$/, '0.5)');
     cell1.style.textAlign = 'left';
-    const cell2 = currow.insertCell(1);
+    let cell2 = currentRow.insertCell(1);
     cell2.textContent = cartridges[key].bc;
-    const cell3 = currow.insertCell(2);
+    let cell3 = currentRow.insertCell(2);
     cell3.innerHTML = cartridges[key].weight +'&nbspг';
-    const cell4 = currow.insertCell(3);
- //   cell4.id = key
-    const observ = new Price_cell(cell4, cartridges[key]);
-    discountM.registerObserver(observ);
+    let cell4 = currentRow.insertCell(3);
 
-    const cell0 = currow.insertCell(0);
+    let observ = new PriceCell(cell4, cartridges[key]);
+    DISCOUNT_OBJ.registerObserver(observ);
 
-    const lbl = document.createElement('label');
+    let cell0 = currentRow.insertCell(0);
+
+    let lbl = document.createElement('label');
     lbl.className = 'custom-checkbox ' + key;
-    const chkbx = document.createElement('input');
+    let chkbx = document.createElement('input');
     chkbx.type = 'checkbox';
     chkbx.className = 'custom-control-input';
-    if (cartridges[key].type == '366') chkbx.checked = true;
+    if (cartridges[key].type === '366') chkbx.checked = true;
     chkbx.id = key;
     chkbx.onclick = function() { checkupdate(this.id); };
-    const ind = document.createElement('span');
+    let ind = document.createElement('span');
     ind.className = 'custom-control-indicator';
 
     // dynamic colored sliders
@@ -328,7 +350,7 @@ function tablegen(cartridges) {
         + ' .custom-control-input:checked ~ .custom-control-indicator,'
         + `.${key}`
         + ' .custom-control-input:checked ~ .custom-control-indicator:after'
-        + `{background-color: ${colors[key]}}`;
+        + `{background-color: ${COLORS[key]}}`;
 
     lbl.appendChild(chkbx);
     lbl.appendChild(ind);
@@ -345,20 +367,20 @@ function updateVisibility() {
   window.mchart.update();
 
   //visibility for spreadChart
-  spreaddata[0].data = [];
-  spreaddata[0].backgroundColor = [];
-  labeld = [];
+  spreadData[0].data = [];
+  spreadData[0].backgroundColor = [];
+  labelD = [];
   let i = 0;
-  for (let key in tkm) {
-    if (visibilityArr[i] == 0) {
-      spreaddata[0].data.push(tkm[key].spread / 2);
-      spreaddata[0].backgroundColor.push(colors[key].replace(/1\)$/, '0.6)'));
-      labeld.push(key);
+  for (let key in TKM) {
+    if (visibilityArr[i] === 0) {
+      spreadData[0].data.push(TKM[key].spread / 2);
+      spreadData[0].backgroundColor.push(COLORS[key].replace(/1\)$/, '0.6)'));
+      labelD.push(key);
     }
     i++;
   }
   if (window.myPolarArea) {
-    window.myPolarArea.data.labels = labeld;
+    window.myPolarArea.data.labels = labelD;
     window.myPolarArea.update();
   }
 }
@@ -367,11 +389,11 @@ function checkupdate(bullet) {
   // function to get number of a called bullet in the dataset
   const i = function() {
     for (let i = 0; i < window.mchart.data.datasets.length; i++) {
-      if (window.mchart.data.datasets[i].label == bullet)  return i;
+      if (window.mchart.data.datasets[i].label === bullet) return i;
     }
   }();
 
-  if (document.getElementById(bullet).checked == true) {
+  if (document.getElementById(bullet).checked === true) {
     visibilityArr[i] = 0;
   } else {
     visibilityArr[i] = 1;
@@ -379,33 +401,33 @@ function checkupdate(bullet) {
   updateVisibility();
 }
 
-function tabchange(choice) {
+function tabChange(choice) {
   setActive(choice);
-  if (choice != 'spread') {
+  if (choice !== 'spread') {
     document.getElementById('spreadChart').style.display = 'none';
     document.getElementById('ballChart').style.display = 'initial';
 
     switch (choice) {
       case 'speed':
-        window.mchart.data.datasets = speed_graphdata;
+        window.mchart.data.datasets = speedGraphdata;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString =
             'Скорость пули, м/с';
         break;
       case 'energy':
-        window.mchart.data.datasets = energy_graphdata;
+        window.mchart.data.datasets = energyGraphdata;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString =
             'Энергия, джоули';
         break;
       case 'drop':
+        window.mchart.data.datasets = dropGraphdata;
         window.mchart.options.scales.yAxes[0].scaleLabel.labelString =
             'Падение, мм';
         break;
       default:
         throw new Error('Unknown Graph');
     }
-
   }
-  else if (choice == 'spread') {
+  else if (choice === 'spread') {
     if (!window.myPolarArea) spread();
     document.getElementById('ballChart').style.display = 'none';
     document.getElementById('spreadChart').style.display = 'initial';
@@ -414,29 +436,29 @@ function tabchange(choice) {
 }
 
 function setActive(name) {
-  const tablinks = document.getElementsByClassName('tablinks');
-  for (let i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '');
+  const TABLINKS = document.getElementsByClassName('tablinks');
+  for (let i = 0; i < TABLINKS.length; i++) {
+    TABLINKS[i].className = TABLINKS[i].className.replace(' active', '');
   }
   document.getElementById(name).className += ' active';
 }
 
-function saleupd() {
+function priceUpdate() {
   if (document.getElementById('temp').checked) {
-    discountM.setShop('temp');
+    DISCOUNT_OBJ.setShop('temp');
   } else {
-    discountM.setShop('tkm');
+    DISCOUNT_OBJ.setShop('tkm');
   }
 
-  discountM.setDiscount(document.getElementById('discount').value);
+  DISCOUNT_OBJ.setDiscount(document.getElementById('discount').value);
 
   if (document.getElementById('discobox').checked) {
-    discountM.applyDiscount();
+    DISCOUNT_OBJ.applyDiscount();
   }
   else {
-    discountM.basePrice();
+    DISCOUNT_OBJ.basePrice();
   }
-  discountM.notifyObservers();
+  DISCOUNT_OBJ.notifyObservers();
 }
 
 function show96(box) {
@@ -444,13 +466,13 @@ function show96(box) {
     document.getElementById('lanstyle').innerHTML = ''
   }
   else {
-    document.getElementById('lanstyle').innerHTML = '.hidden { display:none }'
-      for (let key in tkm) {
-        if (tkm[key].type != '366') {
-          const slider = document.getElementById(key);
-          if (slider.checked = true) slider.click();
-        }
+    document.getElementById('lanstyle').innerHTML = '.hidden { display:none }';
+    for (let key in TKM) {
+      if (TKM[key].type !== '366') {
+        let slider = document.getElementById(key);
+        if (slider.checked = true) slider.click();
       }
+    }
   }
 }
 
@@ -463,17 +485,17 @@ window.onload = function() {
   document.getElementById('spreadChart').style.display = 'none';
   setActive('drop');
 
-  for (let key in tkm) {
-    if (tkm[key].type != '366') {
+  for (let key in TKM) {
+    if (TKM[key].type !== '366') {
       visibilityArr.push(1);
     } else {
       visibilityArr.push(0);
     }
   }
 
-  initdata(tkm);
-  tablegen(tkm);
+  initData(TKM);
+  tableGenerate(TKM);
   drop();
   updateVisibility();
-  saleupd();
+  priceUpdate();
 };
