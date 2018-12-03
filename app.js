@@ -1,17 +1,31 @@
 'use strict'; // Use ECMAScript 5 strict mode in browsers that support it
 
 // Classes
+
+class Color {
+  constructor([red, green, blue]) {
+    this.red = red;
+    this.green = green;
+    this.blue = blue;
+  }
+
+  toChart(transparency = 1) {
+    return `rgba(${this.red},${this.green},${this.blue},${transparency})`
+  }
+}
+
 class Bullet {
-  constructor(name, bc, weight, spread, pricet, pricek, type, drop, speed) {
+  constructor({name, type, bc, weight, spread, pricetkm, pricetemp, drop, speed, color}) {
     this.name = name;
+    this.type = type;
     this.bc = bc;
     this.weight = weight;
     this.spread = spread;
-    this.pricek = pricek;
+    this.pricetemp = pricetemp;
     this.drop = drop;
     this.speed = speed;
-    this.pricet = pricet;
-    this.type = type;
+    this.pricetkm = pricetkm;
+    this.color = new Color(color);
   }
 
   toString() {
@@ -79,9 +93,9 @@ class DiscountData {
     for (let observer of this.observers) {
       let price;
       if (this.shop === 'temp') {
-        price = observer.bullet.pricet;
+        price = observer.bullet.pricetemp;
       } else {
-        price = observer.bullet.pricek;
+        price = observer.bullet.pricetkm;
       }
       if (this.discountActive) {
         price = price * (1 - this.discount);
@@ -100,52 +114,17 @@ class DiscountData {
 }
 
 // Variables
-let dropGraphdata = [],
-  speedGraphdata = [],
-  energyGraphdata = [],
-  visibilityArr = [],
-  spreadData = [{data: [], backgroundColor: []}],
-  labelD = [];
+let dropGraphdata = [];
+let speedGraphdata = [];
+let energyGraphdata = [];
+let visibilityArr = [];
+let spreadData = [{data: [], backgroundColor: []}];
+let labelD = [];
 
 // Constants
-const LABELS_GIVEN = [ 0, 50, 100, 150, 175, 200 ],
-  DISCOUNT_OBJ = new DiscountData(),
-  TKM = {},
-  COLORS = {
-    eco: 'rgba(60,179,113,1)',
-    deri: 'rgba(30,144,255,1)',
-    kion13: 'rgba(80,80,80,1)',
-    kion15: 'rgba(106,90,205,1)',
-    sp13: 'rgba(220,20,60,1)',
-    fmj: 'rgba(255,140,0,1)',
-    etna: 'rgba(191,0,139,1)',
-    fmj15: 'rgba(127,70,27,1)',
-    fmj15us: 'rgba(76,187,23,1)',
-    sp18: 'rgba(255,192,203,1)',
-  };
-
-TKM.eco = new Bullet('Эко', 0.14, 6.5, 100, 19, 22.5, '366',
-  [0, 10, 0, -80, -150, -250], [810, 700, 600, 515, 480, 440]);
-TKM.deri = new Bullet('Дери', 0.25, 13.5, 70, 24, 28, '366',
-  [0, 30, 0, -60, -180, -315], [550, 516, 470, 426, 407, 389]);
-TKM.kion13 = new Bullet('Кион&nbsp13', 0.2, 13, 40, 26, 32.5, '366',
-  [0, 20, 0, -110, -210, -330], [650, 584, 525, 470, 444, 421]);
-TKM.kion15 = new Bullet('Кион&nbsp15', 0.23, 15, 40, 27, 32.5, '366',
-  [0, 30, 0, -130, -230, -370], [600, 546, 497, 451, 430, 410]);
-TKM.sp13 = new Bullet('SP&nbsp13', 0.2, 12.6, 60, 27, 32.5, '366',
-  [0, 20, 0, -120, -230, -370], [620, 545, 490, 434, 409, 388]);
-TKM.fmj = new Bullet('FMJ', 0.23, 13.5, 65, 27, 32.5, '366',
-  [0, 50, 0, -76, -120, -190], [600, 550, 500, 454, 432, 413]);
-TKM.etna = new Bullet('Этна', 0.19, 12.2, 35, null, null, '366',
-  [0, 30, 0, -140, -250, -410], [600, 537, 480, 428, 406, 385]);
-
-TKM.fmj15 = new Bullet('FMJ 15', 0.21, 14.8, 45, 31, 45, '96',
-  [0, 32, 0, -80, NaN, -208], [770, 694, 628, 565, NaN]);
-TKM.fmj15us = new Bullet('<abbr title="Уменьшенная Скорость">FMJ 15 УС</abbr>',
-  0.21, 14.8, 45, 31, 45, '96',
-  [0, 22, 0, -158, NaN, -333], [571, 516, 467, NaN, NaN]);
-TKM.sp18 = new Bullet('SP 18', '0.25?', 18, 80, 34, 43, '96',
-  [0, 39, 0, -87, NaN, -286], [600, 605, 557, 518, NaN]);
+const LABELS_GIVEN = [ 0, 50, 100, 150, 175, 200 ];
+const DISCOUNT_OBJ = new DiscountData();
+const TKM = {};
 
 // Functions
 function moaSpread(spread) { return ((3.438 * spread) / 100).toFixed(1); }
@@ -157,6 +136,7 @@ function initData(cartridges) {
     let dropScatter = [];
     let speedScatter = [];
     let energyScatter = [];
+
     for (let i = 0; i < LABELS_GIVEN.length; i++) {
       dropScatter.push({
         x: LABELS_GIVEN[i],
@@ -173,22 +153,22 @@ function initData(cartridges) {
     }
     dropGraphdata.push({
       label: key,
-      backgroundColor: COLORS[key],
-      borderColor: COLORS[key],
+      backgroundColor: TKM[key].color.toChart(),
+      borderColor: TKM[key].color.toChart(),
       data: dropScatter,
       fill: false,
     });
     speedGraphdata.push({
       label: key,
-      backgroundColor: COLORS[key],
-      borderColor: COLORS[key],
+      backgroundColor: TKM[key].color.toChart(),
+      borderColor: TKM[key].color.toChart(),
       data: speedScatter,
       fill: false,
     });
     energyGraphdata.push({
       label: key,
-      backgroundColor: COLORS[key],
-      borderColor: COLORS[key],
+      backgroundColor: TKM[key].color.toChart(),
+      borderColor: TKM[key].color.toChart(),
       data: energyScatter,
       fill: false,
     });
@@ -247,6 +227,7 @@ function drop() {
       }
     }
   };
+
   const CTX = document.getElementById('ballChart').getContext('2d');
   window.mchart = new Chart(CTX, config);
   window.mchart.aspectRatio = 1;
@@ -306,6 +287,7 @@ function tableGenerate(cartridges) {
   let oneShot = false;
 
   for (let key in cartridges) {
+    console.log(key);
     if (cartridges[key].type !== '366' && !oneShot) {
       let separator = TABLE.insertRow(-1);
       let labelLancaster = separator.insertCell(-1);
@@ -321,7 +303,7 @@ function tableGenerate(cartridges) {
     if (cartridges[key].type !== '366') currentRow.className = 'hidden';
     let cell1 = currentRow.insertCell(0);
     cell1.innerHTML = cartridges[key].name;
-    cell1.style.backgroundColor = COLORS[key].replace(/1\)$/, '0.5)');
+    cell1.style.backgroundColor = TKM[key].color.toChart(0.5);
     cell1.style.textAlign = 'left';
     let cell2 = currentRow.insertCell(1);
     cell2.textContent = cartridges[key].bc;
@@ -350,7 +332,7 @@ function tableGenerate(cartridges) {
         + ' .custom-control-input:checked ~ .custom-control-indicator,'
         + `.${key}`
         + ' .custom-control-input:checked ~ .custom-control-indicator:after'
-        + `{background-color: ${COLORS[key]}}`;
+        + `{background-color: ${TKM[key].color.toChart()}}`;
 
     lbl.appendChild(chkbx);
     lbl.appendChild(ind);
@@ -374,7 +356,8 @@ function updateVisibility() {
   for (let key in TKM) {
     if (visibilityArr[i] === 0) {
       spreadData[0].data.push(TKM[key].spread / 2);
-      spreadData[0].backgroundColor.push(COLORS[key].replace(/1\)$/, '0.6)'));
+
+      spreadData[0].backgroundColor.push(TKM[key].color.toChart(0.6));
       labelD.push(key);
     }
     i++;
@@ -477,6 +460,7 @@ function show96(box) {
 }
 
 window.onload = function() {
+
   const hidElem = document.createElement('style');
   hidElem.innerHTML = '.hidden { display:none }';
   hidElem.id = 'lanstyle';
@@ -485,17 +469,27 @@ window.onload = function() {
   document.getElementById('spreadChart').style.display = 'none';
   setActive('drop');
 
-  for (let key in TKM) {
-    if (TKM[key].type !== '366') {
-      visibilityArr.push(1);
-    } else {
-      visibilityArr.push(0);
+  const datafetch = async () => {
+    const response = await fetch('http://localhost:8000/data.json');
+    const json = await response.json();
+    for (let bullet in json) {
+      TKM[bullet] = new Bullet(json[bullet]);
     }
+
+    for (let key in TKM) {
+      if (TKM[key].type !== '366') {
+        visibilityArr.push(1);
+      } else {
+        visibilityArr.push(0);
+      }
+    }
+
+    initData(TKM);
+    tableGenerate(TKM);
+    drop();
+    updateVisibility();
+    priceUpdate();
   }
 
-  initData(TKM);
-  tableGenerate(TKM);
-  drop();
-  updateVisibility();
-  priceUpdate();
+  datafetch();
 };
