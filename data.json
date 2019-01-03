@@ -90,7 +90,7 @@
     ,"weight": 14.8
     ,"spread": 45
     ,"pricetkm": 45
-    ,"pricetemp": 32
+    ,"pricetemp": 43
     ,"drop": [0, 32, 0, -80, "NaN", -208]
     ,"speed": [770, 694, 628, 565, "NaN"]
     ,"color": [127,70,27]
@@ -102,7 +102,7 @@
     ,"weight": 14.8
     ,"spread": 45
     ,"pricetkm": 45
-    ,"pricetemp": 32
+    ,"pricetemp": 43
     ,"drop": [0, 22, 0, -158, "NaN", -333]
     ,"speed": [571, 516, 467, "NaN", "NaN"]
     ,"color": [76,187,23]
@@ -114,7 +114,7 @@
     ,"weight": 18
     ,"spread": 80
     ,"pricetkm": 43
-    ,"pricetemp": 35
+    ,"pricetemp": 41
     ,"drop": [0, 39, 0, -87, "NaN", -286]
     ,"speed": [600, 605, 557, 518, "NaN"]
     ,"color": [255,192,203]

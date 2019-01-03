@@ -5,33 +5,24 @@
 <meta name="description" content="Интерактивное сравнение характеристик заводских патронов калибра .366 Техкрим и 9,6/53 Lancaster">
 <meta name="keywords" content="366,.366,.366ТКМ,Техкрим,366TKM,патроны,эко,дери,кион,sp13,fmj,этна">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-<script src="app.js"></script>
-<link rel="stylesheet" href="style.css">
+<script src="dist/bundle.js"></script>
+<link rel="stylesheet" href="dist/main.css">
 
 <h3 class="header">
   Характеристики патронов .366<abbr title="Техкрим">ТКМ</abbr>
 </h3>
 
 <noscript>Ваш браузер не поддерживает JavaScript или он отключeн :(</noscript>
-<div align="center">
-<table class="mtab" id="mtable">
-  <tr>
-    <th>
-    <th>Патрон
-    <th><abbr title="Баллистический коэффициент">BC</abbr>
-    <th>Масса
-    <th>Цена
-</table>
+<div id="mt" align="center">
 </div>
 
 <div align="center">
   <form>
-    <input type="radio" id='temp' value="temp" name="pricesource" onchange="priceUpdate()" checked>
+    <input type="radio" id='temp' value="temp" name="pricesource" checked>
       <label for="temp">
         Цена&nbsp;<a href="https://www.tempgun.ru/">ТЕМПa</a>
       </label>
-    <input type="radio" id='techcrim' value="techcrim" name="pricesource" onchange="priceUpdate()">
+    <input type="radio" id='techcrim' value="techcrim" name="pricesource">
       <label for="techcrim">
         Цена&nbsp;<a href="http://techcrim.ru/wp-content/uploads/price/Price.pdf">Техкрима</a>
       </label>
@@ -42,25 +33,24 @@
 <table class="noBorder">
   <tr>
     <td>
-      <input type="checkbox" id='discobox' name="sale" onchange="priceUpdate()">
+      <input type="checkbox" id='discobox' name="sale">
        <label for="discobox">
-         Учитывать <input type="number" id="discount" value="5" min="-99" max="99"
-         onchange="priceUpdate()">% скидку
+         Учитывать <input type="number" id="discount" value="5" min="-99" max="99">% скидку
        </label>
   <tr>
     <td>
-      <input type="checkbox" id="l96" name="show_lancaster" onchange="show96(this)">
+      <input type="checkbox" id="l96" name="show_lancaster">
         <label for="l96">
           Показывать <b>9,6/53 Lancaster</b>
         </label>
 </table>
 </div>
 
-<div class='tab'>
-  <button class="tablinks" id="drop" onclick="tabChange(this.id)">Падение</button>
-  <button class="tablinks" id="energy" onclick="tabChange(this.id)">Энергия</button>
-  <button class="tablinks" id="speed" onclick="tabChange(this.id)">Скорость</button>
-  <button class="tablinks" id="spread" onclick="tabChange(this.id)">Кучность</button>
+<div class='tab' id="tabs">
+  <button class="tablinks" id="drop">Падение</button>
+  <button class="tablinks" id="energy">Энергия</button>
+  <button class="tablinks" id="speed">Скорость</button>
+  <button class="tablinks" id="spread">Кучность</button>
 </div>
 
 <div id="canvas-holder">

@@ -1,4 +1,7 @@
 'use strict'; // Use ECMAScript 5 strict mode in browsers that support it
+import Chart from 'chart.js/dist/Chart.min.js';
+import Data from './data.json';
+import './style.css';
 
 // Classes
 
@@ -10,7 +13,7 @@ class Color {
   }
 
   toChart(transparency = 1) {
-    return `rgba(${this.red},${this.green},${this.blue},${transparency})`
+    return `rgba(${this.red}, ${this.green}, ${this.blue}, ${transparency})`
   }
 }
 
@@ -27,20 +30,12 @@ class Bullet {
     this.pricetkm = pricetkm;
     this.color = new Color(color);
   }
-
-  toString() {
-    return `Патрон ${this.name}`;
-  }
 }
 
 class PriceCell {
   constructor(node, bullet) {
     this.node = node;
     this.bullet = bullet;
-  }
-
-  toString() {
-    return `Cell Object ${this.bullet.name}`;
   }
 
   update(x) {
@@ -54,10 +49,6 @@ class DiscountData {
     this.discountActive = false;
     this.discount = 0;
     this.observers = [];
-  }
-
-  toString() {
-    return 'DiscountData Object';
   }
 
   registerObserver(observer) {
@@ -283,13 +274,28 @@ function spread() {
 
 function tableGenerate(cartridges) {
   const TABLE = document.getElementById('mtable');
+  let tbl = document.createElement('table');
+  tbl.setAttribute('class', 'mtab');
+  tbl.setAttribute('id', 'mtable');
+  let headers = tbl.insertRow(0);
+  headers.style.fontWeight = 'bold';
+  headers.style.textAlign = 'center';
+  let c0 = headers.insertCell(0);
+  c0.innerHTML = '';
+  let c1 = headers.insertCell(1);
+  c1.innerHTML = 'Патрон';
+  let c2 = headers.insertCell(2);
+  c2.innerHTML = '<abbr title="Баллистический коэффициент">BC</abbr>';
+  let c3 = headers.insertCell(3);
+  c3.innerHTML = 'Масса';
+  let c4 = headers.insertCell(4);
+  c4.innerHTML = 'Цена';
   const styleElem = document.createElement('style');
   let oneShot = false;
 
   for (let key in cartridges) {
-    console.log(key);
     if (cartridges[key].type !== '366' && !oneShot) {
-      let separator = TABLE.insertRow(-1);
+      let separator = tbl.insertRow(-1);
       let labelLancaster = separator.insertCell(-1);
       separator.className = 'hidden';
       labelLancaster.style.textAlign = 'center';
@@ -298,7 +304,7 @@ function tableGenerate(cartridges) {
       labelLancaster.colSpan = 5;
       oneShot = true;
     }
-    let currentRow = TABLE.insertRow(-1);
+    let currentRow = tbl.insertRow(-1);
     currentRow.style.textAlign = 'center';
     if (cartridges[key].type !== '366') currentRow.className = 'hidden';
     let cell1 = currentRow.insertCell(0);
@@ -323,7 +329,7 @@ function tableGenerate(cartridges) {
     chkbx.className = 'custom-control-input';
     if (cartridges[key].type === '366') chkbx.checked = true;
     chkbx.id = key;
-    chkbx.onclick = function() { checkupdate(this.id); };
+    chkbx.onclick = function() {checkupdate(this.id);};
     let ind = document.createElement('span');
     ind.className = 'custom-control-indicator';
 
@@ -339,6 +345,7 @@ function tableGenerate(cartridges) {
     cell0.appendChild(lbl);
   }
   document.head.appendChild(styleElem);
+  document.getElementById('mt').appendChild(tbl);
 }
 
 function updateVisibility() {
@@ -461,35 +468,36 @@ function show96(box) {
 
 window.onload = function() {
 
+  for (let bullet in Data) {
+    TKM[bullet] = new Bullet(Data[bullet]);
+  }
+  for (let key in TKM) {
+    if (TKM[key].type !== '366') {
+      visibilityArr.push(1);
+    } else {
+      visibilityArr.push(0);
+    }
+  }
+
   const hidElem = document.createElement('style');
   hidElem.innerHTML = '.hidden { display:none }';
   hidElem.id = 'lanstyle';
   document.head.appendChild(hidElem);
 
   document.getElementById('spreadChart').style.display = 'none';
+  document.getElementById('tabs').addEventListener('click', e => tabChange(e.target.id));
   setActive('drop');
 
-  const datafetch = async () => {
-    const response = await fetch('http://localhost:8000/data.json');
-    const json = await response.json();
-    for (let bullet in json) {
-      TKM[bullet] = new Bullet(json[bullet]);
-    }
+  initData(TKM);
+  tableGenerate(TKM);
+  drop();
+  updateVisibility();
+  priceUpdate();
 
-    for (let key in TKM) {
-      if (TKM[key].type !== '366') {
-        visibilityArr.push(1);
-      } else {
-        visibilityArr.push(0);
-      }
-    }
+  document.getElementById('l96').addEventListener('click', e => show96(e.target));
+  document.getElementById('discobox').addEventListener('change', e => priceUpdate());
+  document.getElementById('temp').addEventListener('change', e => priceUpdate());
+  document.getElementById('techcrim').addEventListener('change', e => priceUpdate());
+  document.getElementById('discount').addEventListener('change', e => priceUpdate());
 
-    initData(TKM);
-    tableGenerate(TKM);
-    drop();
-    updateVisibility();
-    priceUpdate();
-  }
-
-  datafetch();
-};
+}
