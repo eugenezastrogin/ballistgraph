@@ -5,7 +5,7 @@
     ,"bc": 0.14
     ,"weight": 6.5
     ,"spread": 100
-    ,"pricetkm": 22.5
+    ,"pricetkm": 23
     ,"pricetemp": 22
     ,"drop": [0, 10, 0, -80, -150, -250]
     ,"speed": [810, 700, 600, 515, 480, 440]
@@ -17,8 +17,8 @@
     ,"bc": 0.25
     ,"weight": 13.5
     ,"spread": 70
-    ,"pricetkm": 28
-    ,"pricetemp": 27
+    ,"pricetkm": 28.5
+    ,"pricetemp": 27.8
     ,"drop": [0, 30, 0, -60, -180, -315]
     ,"speed": [550, 516, 470, 426, 407, 389]
     ,"color": [30,144,225]
@@ -29,8 +29,8 @@
     ,"bc": 0.2
     ,"weight": 13
     ,"spread": 40
-    ,"pricetkm": 29.5
-    ,"pricetemp": 28
+    ,"pricetkm": 30
+    ,"pricetemp": 28.8
     ,"drop": [0, 20, 0, -110, -210, -330]
     ,"speed": [650, 584, 525, 470, 444, 421]
     ,"color": [80,80,80]
@@ -41,8 +41,8 @@
     ,"bc": 0.23
     ,"weight": 15
     ,"spread": 40
-    ,"pricetkm": 32.5
-    ,"pricetemp": 28
+    ,"pricetkm": 33
+    ,"pricetemp": 31.9
     ,"drop": [0, 30, 0, -130, -230, -370]
     ,"speed": [600, 546, 497, 451, 430, 410]
     ,"color": [106,90,205]
@@ -53,8 +53,8 @@
     ,"bc": 0.2
     ,"weight": 12.6
     ,"spread": 60
-    ,"pricetkm": 32.5
-    ,"pricetemp": 31
+    ,"pricetkm": 33
+    ,"pricetemp": 31.9
     ,"drop": [0, 20, 0, -120, -230, -370]
     ,"speed": [620, 545, 490, 434, 409, 388]
     ,"color": [220,20,60]
@@ -65,8 +65,8 @@
     ,"bc": 0.23
     ,"weight": 13.5
     ,"spread": 65
-    ,"pricetkm": 32.5
-    ,"pricetemp": 31
+    ,"pricetkm": 33
+    ,"pricetemp": 31.9
     ,"drop": [0, 50, 0, -76, -120, -190]
     ,"speed": [600, 550, 500, 454, 432, 413]
     ,"color": [255,140,0]
@@ -89,8 +89,8 @@
     ,"bc": 0.21
     ,"weight": 14.8
     ,"spread": 45
-    ,"pricetkm": 45
-    ,"pricetemp": 43
+    ,"pricetkm": 45.7
+    ,"pricetemp": 44
     ,"drop": [0, 32, 0, -80, "NaN", -208]
     ,"speed": [770, 694, 628, 565, "NaN"]
     ,"color": [127,70,27]
@@ -101,8 +101,8 @@
     ,"bc": 0.21
     ,"weight": 14.8
     ,"spread": 45
-    ,"pricetkm": 45
-    ,"pricetemp": 43
+    ,"pricetkm": 45.7
+    ,"pricetemp": 44
     ,"drop": [0, 22, 0, -158, "NaN", -333]
     ,"speed": [571, 516, 467, "NaN", "NaN"]
     ,"color": [76,187,23]
@@ -113,10 +113,22 @@
     ,"bc": "0.25?"
     ,"weight": 18
     ,"spread": 80
-    ,"pricetkm": 43
-    ,"pricetemp": 41
+    ,"pricetkm": 43.70
+    ,"pricetemp": 43
     ,"drop": [0, 39, 0, -87, "NaN", -286]
-    ,"speed": [600, 605, 557, 518, "NaN"]
+    ,"speed": [650, 605, 557, 518, "NaN"]
     ,"color": [255,192,203]
+  }
+  ,"kion18": {
+     "name": "Кион&nbsp18"
+    ,"type": "96"
+    ,"bc": "0.25?"
+    ,"weight": 18
+    ,"spread": 100
+    ,"pricetkm": 43.70
+    ,"pricetemp": 43
+    ,"drop": [0, "NaN", "NaN", "NaN", "NaN", "NaN"]
+    ,"speed": [650, "NaN", "NaN", "NaN", "NaN"]
+    ,"color": [13,152,186]
   }
 }
