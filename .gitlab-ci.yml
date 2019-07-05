@@ -1,0 +1,16 @@
+image: node:12
+
+pages:
+  cache:
+    paths:
+    - node_modules/
+  script:
+  - npm install
+  - npm run build
+  - cp index.html public/
+  - find public -type f -iregex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -execdir gzip -f --keep {} \;
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
